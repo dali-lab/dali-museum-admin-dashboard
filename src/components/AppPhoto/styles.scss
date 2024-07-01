@@ -1,0 +1,10 @@
+.app-photo {
+  max-width: 500px;
+  max-height: 500px;
+
+  .img {
+    height: 75%; 
+    width: 75%; 
+    object-fit: contain;
+  }
+}

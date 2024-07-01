@@ -1,0 +1,75 @@
+{
+  "name": "crud-template-frontend-redux-toolkit",
+  "version": "1.0.0",
+  "description": "DALI Lab Frontend CRUD template w/ TypeScript, Redux Toolkit",
+  "productionURL": "https://your-api-url.here",
+  "productionClientURL": "https://your-app-url.here",
+  "repository": "https://github.com/dali-lab/crud-template-frontend-postgres",
+  "author": "Eric Lu <Eric.J.Lu.25@dartmouth.edu>",
+  "contributors": [
+    "Adam McQuilkin <Adam.J.Mcquilkin.22@Dartmouth.edu>",
+    "Tyler Vergho <Tyler.K.Vergho.23@dartmouth.edu>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.8.5",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^17.0.45",
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "axios": "^0.27.2",
+    "babel-eslint": "^10.1.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-plugin-airbnb-base": "^0.0.1-security",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.4.0",
+    "react-redux": "^8.0.2",
+    "react-router-dom": "^6.3.0",
+    "vite": "^5.0.10",
+    "vite-plugin-svgr": "^4.2.0",
+    "vite-tsconfig-paths": "^4.2.2",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview",
+    "lint": "eslint ./src"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-standard-with-typescript": "^22.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.5",
+    "eslint-plugin-promise": "^6.0.1",
+    "eslint-plugin-react": "^7.31.8",
+    "sass": "^1.54.5",
+    "typescript": "^4.8.3"
+  }
+}
