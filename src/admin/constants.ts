@@ -1,4 +1,4 @@
 export const DEFAULT_ADMIN = {
-  email: 'dali@hdil-admin.onrender.com',
+  email: 'hdil@dali-admin.onrender.com',
   password: 'howdoilook',
 };
