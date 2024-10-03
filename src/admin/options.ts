@@ -15,7 +15,7 @@ const options: AdminJSOptions = {
   branding: {
     logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMCQaL23jEfo0Qdbx7WijK-MnNuagxzrwsXw&s',
     companyName: 'DALI Lab',
-    favicon: 'https://images.squarespace-cdn.com/content/v1/551cbdc5e4b0cd11d2597487/1608046670777-X9DQPJV4BGM0ZYM970FD/favicon.ico?format=100w',
+    favicon: 'https://how-do-i-look.s3.us-east-2.amazonaws.com/assets/hdil-eye.png',
   },
   componentLoader,
   rootPath: '/',
