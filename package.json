@@ -28,7 +28,7 @@
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^4.2.1",
     "@vitejs/plugin-react-swc": "^3.5.0",
-    "axios": "^0.27.2",
+    "axios": "^0.28.0",
     "babel-eslint": "^10.1.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-plugin-airbnb-base": "^0.0.1-security",
