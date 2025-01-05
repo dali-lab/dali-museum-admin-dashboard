@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import useAppDispatch from '../../hooks/useAppDispatch';
-import { signUp } from '../../redux/slices/authSlice';
+import { signUp } from '@/api/auth';
 
-function SignUpPage() {
-  const dispatch = useAppDispatch();
-  
+
+function SignUpPage() {  
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+
+  const { mutate: mutateSignUp } = signUp();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,7 +20,7 @@ function SignUpPage() {
     else if (!confirmPassword) alert('Please confirm your password!');
     else if (!(password === confirmPassword)) alert('Passwords do not match!');
     else {
-      dispatch(signUp({ email, password, name }));
+      mutateSignUp({ email, password, name });
     }
   };
 

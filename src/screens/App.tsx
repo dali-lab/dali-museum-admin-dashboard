@@ -3,11 +3,8 @@ import {
   BrowserRouter as Router,
   Routes, Route,
 } from 'react-router-dom';
-import useAppSelector from '../hooks/useAppSelector';
-import useAppDispatch from '../hooks/useAppDispatch';
-import { checkConnection } from '../redux/slices/connectionSlice';
-import { ROUTES } from '../utils/constants';
-import { UserScopes } from '../types/users';
+import { ROUTES } from '@/utils/constants';
+import { UserScopes } from '@/types/users';
 import FrontPage from './FrontPage';
 import ErrorPage from './ErrorPage';
 import ForbiddenPage from './ForbiddenPage';
@@ -16,6 +13,8 @@ import SignUpPage from './SignUpPage';
 import UsersPage from './UsersPage';
 import ResourcesPage from './ResourcesPage';
 import VerifyPage from './VerifyPage';
+import { getConnection } from '@/api/connection';
+import { getAuthUser, initCredentials, jwtSignIn } from '@/api/auth';
 
 interface ProtectedRouteProps {
   allowableScopes: UserScopes[];
@@ -23,7 +22,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ allowableScopes, children }: ProtectedRouteProps) => {
-  const { authenticated, role } = useAppSelector((state) => state.auth);
+  const { authenticated, role } = getAuthUser().data;
 
   if (!allowableScopes.includes(role) || !authenticated) {
     return <ForbiddenPage />;
@@ -37,12 +36,7 @@ const ProtectedRoute = ({ allowableScopes, children }: ProtectedRouteProps) => {
 };
 
 function App() {
-  const { isConnected } = useAppSelector((state) => state.connection);
-  const dispatch = useAppDispatch();
-  
-  useEffect(() => {
-    dispatch(checkConnection());
-  }, []);
+  const { isConnected } = getConnection().data;
 
   if (!isConnected) return <ErrorPage />;
 

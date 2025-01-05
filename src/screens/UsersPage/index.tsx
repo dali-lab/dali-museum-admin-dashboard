@@ -1,33 +1,39 @@
 import React, { useState } from 'react';
-import useAppSelector from '../../hooks/useAppSelector';
-import useAppDispatch from '../../hooks/useAppDispatch';
-import PageHeader from '../../components/PageHeader';
-import { createUser, getUser, updateUser, deleteUser } from '../../redux/slices/usersSlice';
-import { UserScopes } from '../../types/users';
-import { ROUTES } from '../../utils/constants';
+import PageHeader from '@/components/PageHeader';
+import { UserScopes } from '@/types/users';
+import { ROUTES } from '@/utils/constants';
+import { 
+  getUser,
+  createUser,
+  updateUser,
+  deleteUser,
+} from '@/api/users';
 
 function UsersPage() {
-  const { loading, selectedUser } = useAppSelector((state) => state.users);
-  const dispatch = useAppDispatch();
-
   const [getId, setGetId] = useState<string>('');
-  const handleGetUserSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  
+  const { data: selectedUser, isLoading: isUsersLoading } = getUser(getId);
+  const { mutate: mutateCreateUser } = createUser();
+  const { mutate: mutateUpdateUser } = updateUser();
+  const { mutate: mutateDeleteUser } = deleteUser();
+
+  const handleGetUserSubmit = () => {
     if (!getId) alert('Please enter an id!');
-    else {
-      dispatch(getUser({ id: getId }));
-    }
+    // else {
+    //   dispatch(getUser({ id: getId }));
+    // }
   };
 
   const [createEmail, setCreateEmail] = useState<string>('');
   const [createPassword, setCreatePassword] = useState<string>('');
   const [createName, setCreateName] = useState<string>('');
-  const handleCreateUserSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateUserSubmit = () => {
     // Send only if all fields filled in
     if (!createEmail) alert('Please enter an email!');
     else if (!createPassword) alert('Please enter a password!');
     else if (!createName) alert('Please enter a name!');
     else {
-      dispatch(createUser({ email: createEmail, password: createPassword, name: createName }));
+      mutateCreateUser({ email: createEmail, password: createPassword, name: createName });
     }
   };
 
@@ -35,23 +41,23 @@ function UsersPage() {
   const [updateEmail, setUpdateEmail] = useState<string>('');
   const [updatePassword, setUpdatePassword] = useState<string>('');
   const [updateName, setUpdateName] = useState<string>('');
-  const [updateRole, setUpdateRole] = useState<string>('');
-  const handleUpdateUserSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [updateRole, setUpdateRole] = useState<string>(UserScopes.Unverified);
+  const handleUpdateUserSubmit = () => {
     if (!updateId) alert('Please enter an id!');
     if (!updateEmail) alert('Please enter an email!');
     else if (!updatePassword) alert('Please enter a password!');
     else if (!updateName) alert('Please enter a name!');
     else if (!updateRole) alert('Please enter a scope!');
     else {
-      dispatch(updateUser({ id: updateId, email: updateEmail, password: updatePassword, role: updateRole as UserScopes }));
+      mutateUpdateUser({ id: updateId, email: updateEmail, password: updatePassword, role: updateRole as UserScopes });
     }
   };
 
   const [deleteId, setDeleteId] = useState<string>('');
-  const handleDeleteUserSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleDeleteUserSubmit = () => {
     if (!deleteId) alert('Please enter a id!');
     else {
-      dispatch(deleteUser({ id: deleteId }));
+      mutateDeleteUser({ id: deleteId });
     }
   };
 
@@ -59,7 +65,7 @@ function UsersPage() {
     <div className='container'>
       <PageHeader title={'Resource Page'} toLink={ROUTES.HOME}>
       </PageHeader>
-      { loading
+      { isUsersLoading
         ? <p>Loading...</p>
         : (
           <>

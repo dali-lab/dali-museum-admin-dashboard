@@ -1,14 +1,19 @@
 import React from 'react';
-import useAppDispatch from '../../hooks/useAppDispatch';
-import AppPhoto from '../../components/AppPhoto';
+import AppPhoto from '@/components/AppPhoto';
 import { Link } from 'react-router-dom';
-import { ROUTES } from '../../utils/constants';
-import { logout } from '../../redux/slices/authSlice';
-import DaliDarkImg from '../../assets/dali_dark.png';
-import { SERVER_URL } from '../../utils/constants';
+import { ROUTES } from '@/utils/constants';
+import DaliDarkImg from '@/assets/dali_dark.png';
+import { SERVER_URL } from '@/utils/constants';
+import { logout } from '@/api/auth';
+import useBoundStore from '@/store';
 
 function FrontPage() {
-  const dispatch = useAppDispatch();
+  const { mutate: mutateLogout } = logout();
+  const bearCount = useBoundStore((state) => state.bearCount);
+  const fishCount = useBoundStore((state) => state.fishCount);
+
+  const addBear = useBoundStore((state) => state.addBear);
+  const addFish = useBoundStore((state) => state.addFish);
   
   return (
     <div className='container'>
@@ -37,7 +42,12 @@ function FrontPage() {
       <Link to={ROUTES.RESOURCES}>
         <h1>Resources (user or admin)</h1>
       </Link>
-      <button onClick={(e) => dispatch(logout({}))}>Logout</button>
+      <button onClick={() => mutateLogout()}>Logout</button>
+      <div>
+        (bears, fish) = ({bearCount}, {fishCount})
+      </div>
+      <button onClick={() => addBear()}>Add bear</button>
+      <button onClick={() => addFish()}>Add fish</button>
     </div>
   );
 }

@@ -1,35 +1,33 @@
 import React, { useState } from 'react';
-import useAppSelector from '../../hooks/useAppSelector';
-import useAppDispatch from '../../hooks/useAppDispatch';
-import PageHeader from '../../components/PageHeader';
-import { 
+import PageHeader from '@/components/PageHeader';
+import { ROUTES } from '@/utils/constants';
+import {
   getAllResources, 
   createResource, 
+  getIndividualResource, 
   updateResource, 
-  deleteResource, 
-  IResource, 
-} from '../../redux/slices/resourcesSlice';
-import { ROUTES } from '../../utils/constants';
+  deleteResource,
+} from '@/api/resources';
+import { IResource } from '@/types/resources';
 
 function ResourcePage() {
-  const { loading, all } = useAppSelector((state) => state.resources);
-  const dispatch = useAppDispatch();
-  
-  const handleGetAllResourcesSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    dispatch(getAllResources({}));
-  };
-
   const [createTitle, setCreateTitle] = useState<string>('');
   const [createDescription, setCreateDescription] = useState<string>('');
   const [createValue, setCreateValue] = useState<string>('');
-  const handleCreateResourceSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  
+  const { data: allResources, isLoading: isResourcesLoading } = getAllResources();
+  const { mutate: mutateCreateResource } = createResource();
+  const { mutate: mutateGetIndividualResource } = getIndividualResource();
+  const { mutate: mutateUpdateResource } = updateResource();
+  const { mutate: mutateDeleteResource } = deleteResource();
+
+  const handleCreateResourceSubmit = () => {
     // Send only if all fields filled in
     if (!createTitle) alert('Please enter a title!');
     else if (!createDescription) alert('Please enter a description!');
     else if (!createValue) alert('Please enter a value!');
     else {
-      dispatch(createResource({ title: createTitle, description: createDescription, value: parseFloat(createValue) }));
+      mutateCreateResource({ title: createTitle, description: createDescription, value: parseFloat(createValue) });
     }
   };
 
@@ -37,38 +35,36 @@ function ResourcePage() {
   const [updateTitle, setUpdateTitle] = useState<string>('');
   const [updateDescription, setUpdateDescription] = useState<string>('');
   const [updateValue, setUpdateValue] = useState<string>('');
-  const handleUpdateResourceSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleUpdateResourceSubmit = () => {
     if (!updateId) alert('Please enter a id!');
     if (!updateTitle) alert('Please enter a title!');
-    else if (!updateDescription) alert('Please enter a description!');
+    else if (!updateDescription) alert('Please entedescription!');
     else if (!updateValue) alert('Please enter a value!');
     else {
-      dispatch(updateResource({ id: updateId, title: updateTitle, description: updateDescription, value: parseFloat(updateValue) }));
+      mutateUpdateResource({ id: updateId, title: updateTitle, description: updateDescription, value: parseFloat(updateValue) });
     }
   };
 
   const [deleteId, setDeleteId] = useState<string>('');
-  const handleDeleteResourceSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleDeleteResourceSubmit = () => {
     if (!deleteId) alert('Please enter a id!');
     else {
-      dispatch(deleteResource({ id: deleteId }));
+      mutateDeleteResource({ id: deleteId });
     }
   };
-  
+
   return (
     <div className='container'>
       <PageHeader title={'Resource Page'} toLink={ROUTES.HOME}>
       </PageHeader>
-      { loading
+      { isResourcesLoading
         ? <p>Loading...</p>
         : (
           <>
-            <form onSubmit={handleGetAllResourcesSubmit}>
-              <button type="submit">Get All Resources</button>
-            </form>
             <div>
               {
-                Object.values(all).map((r: IResource) => <h5>{r.id}, {r.title}, {r.description}, {r.value}</h5>)
+                allResources.map((r: IResource) => <h5>{r.id}, {r.title}, {r.description}, {r.value}</h5>)
               }
             </div>
             <form onSubmit={handleCreateResourceSubmit}>

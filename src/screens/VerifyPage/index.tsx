@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import useAppSelector from '../../hooks/useAppSelector';
-import useAppDispatch from '../../hooks/useAppDispatch';
-import { resendCode, verify } from '../../redux/slices/authSlice';
+import { getAuthUser, verify, resendCode } from '@/api/auth';
 
 function VerifyPage() {
-  const dispatch = useAppDispatch();
-  const { id, email } = useAppSelector((state) => state.auth);
+  const { id, email } = getAuthUser().data;
+  const { mutate: mutateVerify } = verify();
+
   const [code, setCode] = useState<string>('');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -13,7 +12,7 @@ function VerifyPage() {
     // Send only if all fields filled in
     if (!code) alert('Please enter a code!');
     else {
-      dispatch(verify({ id, email, code }));
+      mutateVerify({ id, email, code });
     }
   };
 
@@ -24,7 +23,11 @@ function VerifyPage() {
         <input type="text" placeholder="Code" value={code} onChange={(e) => setCode(e.target.value)} />
         <input type="submit" value="Validate Code" />
       </form>
-      <button onClick={(e) => dispatch(resendCode({ id, email }))}>Resend Code</button>
+      <button onClick={async (e) => {
+        await resendCode({ id, email });
+      }}>
+        Resend Code
+      </button>
     </div>
   );
 }

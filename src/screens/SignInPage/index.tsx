@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import useAppDispatch from '../../hooks/useAppDispatch';
-import { signIn } from '../../redux/slices/authSlice';
+import { signIn } from '@/api/auth';
 
 function SignInPage() {
-  const dispatch = useAppDispatch();
-  
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+
+  const { mutate: mutateSignIn } = signIn();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -15,7 +14,7 @@ function SignInPage() {
     if (!email) alert('Please enter an email address!');
     else if (!password) alert('Please enter a password!');
     else {
-      dispatch(signIn({ email, password }));
+      mutateSignIn({ email, password });
     }
   };
 

@@ -31,15 +31,17 @@ We are using [typically a configuration like [CS52's React-Native ESLint Configu
     .
     ├── ...    
     ├── public
-    ├── src                
+    ├── src          
+    │   └── api                # React Query server state cache  
     │   └── assets             # static assets   
     │   └── components         # reusable components across several screens
-    │   └── hooks              # useAppDispatch, useAppSelector
-    │   └── redux              # Redux store and setup
+    │   └── navigation         # defines navigation flow
     │   └── screens            # individual pages
+    │   └── store              # Zustand client state
+    │   └── types              # TS types
     │   └── utils              # utility folder containing helper files
     ├── tsconfig.json          # TypeScript configuration
-    ├── package.json           # yarn config
+    ├── package.json           # npm config
     └── ...
 
 For more detailed documentation on our file structure and specific functions in the code, feel free to check the project files themselves.
@@ -48,11 +50,11 @@ For more detailed documentation on our file structure and specific functions in 
 
 In the project directory, you can run:
 
-### `yarn install`
+### `npm install`
 
 Installs project dependencies.
 
-### `yarn start`
+### `npm start`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -60,7 +62,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `yarn run build`
+### `npm run build`
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
@@ -68,9 +70,9 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-### `yarn run lint`
+### `npm run lint`
 
-ESLint is set up in this project. To keep code clean, always remember to run `yarn run lint` and fix any lint problems before merging into master.
+ESLint is set up in this project. To keep code clean, always remember to run `npm run lint` and fix any lint problems before merging into master.
 
 ## Deployment
 [Where is the app deployed? i.e. Expo, Surge, TestFlight etc.]

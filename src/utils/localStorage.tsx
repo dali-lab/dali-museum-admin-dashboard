@@ -3,8 +3,8 @@ export const authTokenName = 'authToken';
 /**
  * Gets the site-stored authToken from localStorage
  */
-export function getBearerToken() {
-  return localStorage.getItem(authTokenName);
+export function getBearerToken(): string {
+  return localStorage.getItem(authTokenName) ?? '';
 }
 
 /**
