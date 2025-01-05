@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { SERVER_URL } from 'utils/constants';
+import { SERVER_URL } from '@/utils/constants';
 import axios from 'axios';
-import { UserScopes, IUser } from 'types/users';
+import { UserScopes, IUser } from '@/types/users';
 
 const GET_USER_KEY = 'users/individual';
 

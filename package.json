@@ -1,7 +1,7 @@
 {
-  "name": "crud-template-frontend-redux-toolkit",
+  "name": "crud-template-frontend-query",
   "version": "1.0.0",
-  "description": "DALI Lab Frontend CRUD template w/ TypeScript, Redux Toolkit",
+  "description": "DALI Lab Frontend CRUD template w/ TypeScript, React Query, Zustand",
   "productionURL": "https://your-api-url.here",
   "productionClientURL": "https://your-app-url.here",
   "repository": "https://github.com/dali-lab/crud-template-frontend-postgres",
@@ -12,6 +12,10 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@babel/eslint-parser": "^7.25.9",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-transform-runtime": "^7.25.9",
+    "@babel/preset-react": "^7.26.3",
     "@reduxjs/toolkit": "^1.8.5",
     "@tanstack/react-query": "^5.62.15",
     "@testing-library/jest-dom": "^5.16.5",
@@ -42,7 +46,7 @@
     "start": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "lint": "eslint ./src"
+    "lint": "eslint . --fix --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "eslintConfig": {
     "extends": [
@@ -63,6 +67,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-private-property-in-object": "^7.25.9",
     "@typescript-eslint/eslint-plugin": "^5.36.2",
     "eslint": "^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -71,6 +76,7 @@
     "eslint-plugin-n": "^15.2.5",
     "eslint-plugin-promise": "^6.0.1",
     "eslint-plugin-react": "^7.31.8",
+    "eslint-plugin-react-hooks": "^5.1.0",
     "sass": "^1.54.5",
     "typescript": "^4.8.3"
   }

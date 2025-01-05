@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { SERVER_URL } from 'utils/constants';
+import { SERVER_URL } from '@/utils/constants';
 import axios from 'axios';
-import { IResource } from 'types/resources';
+import { IResource } from '@/types/resources';
 
 export const GET_ALL_RESOURCES_KEY = 'resources/all';
 

@@ -38,6 +38,18 @@ const ProtectedRoute = ({ allowableScopes, children }: ProtectedRouteProps) => {
 function App() {
   const { isConnected } = getConnection().data;
 
+  useEffect(() => {
+    initCredentials();
+  }, []);
+
+  const { mutate: mutateJwtSignIn } = jwtSignIn();
+
+  useEffect(() => {
+    if (isConnected) {
+      mutateJwtSignIn();
+    }
+  }, [isConnected]);
+
   if (!isConnected) return <ErrorPage />;
 
   return (

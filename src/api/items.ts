@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { SERVER_URL } from 'utils/constants';
+import { SERVER_URL } from '@/utils/constants';
 import axios from 'axios';
-import { IItem } from 'types/items';
+import { IItem } from '@/types/items';
 import { getAllResources } from './resources';
 
 const GET_ITEM_KEY = 'items/byResourceId';

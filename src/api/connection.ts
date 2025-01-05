@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { SERVER_URL } from 'utils/constants';
+import { SERVER_URL } from '@/utils/constants';
 import axios from 'axios';
 
 const CONNECTION_KEY = 'connection';
