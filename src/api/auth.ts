@@ -26,6 +26,11 @@ const USER_INITIAL_DATA = {
   authenticated: false,
 };
 
+export const setCredentials = (token: string) => {
+  setBearerToken(token);
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+};
+
 export const getAuthUser = () => {
   return useQuery({
     queryKey: [GET_AUTH_USER_DATA_KEY],
@@ -33,9 +38,18 @@ export const getAuthUser = () => {
   });
 };
 
-export const setCredentials = (token: string) => {
-  setBearerToken(token);
-  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+export const logout = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      setCredentials('');
+      return '';
+    },
+    onSuccess: () => {
+      queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], USER_INITIAL_DATA);
+    },
+  });
 };
 
 export const initCredentials = () => {
@@ -132,20 +146,6 @@ export const jwtSignIn = () => {
         ...payload.user,
         authenticated: true,
       });
-    },
-  });
-};
-
-export const logout = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async () => {
-      setCredentials('');
-      return '';
-    },
-    onSuccess: () => {
-      queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], USER_INITIAL_DATA);
     },
   });
 };
