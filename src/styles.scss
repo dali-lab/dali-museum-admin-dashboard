@@ -1,0 +1,18 @@
+* {
+  font-family: 'Lato', sans-serif;
+}
+
+body, html {
+  min-height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  background-color: #e2e8f0;
+}
+
+.container {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
