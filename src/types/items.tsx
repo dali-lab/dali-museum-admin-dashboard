@@ -1,6 +1,6 @@
 export interface IItem {
-  id: string
-  description: string
-  name: string
-  resourceId: string
+  id: string;
+  description: string;
+  name: string;
+  resourceId: string;
 }

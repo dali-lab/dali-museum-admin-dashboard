@@ -1,14 +1,14 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { SERVER_URL } from '@/utils/constants';
-import axios from 'axios';
-import { UserScopes, IUser } from '@/types/users';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { SERVER_URL } from "@/utils/constants";
+import axios from "axios";
+import { UserScopes, IUser } from "@/types/users";
 
-const GET_USER_KEY = 'users/individual';
+const GET_USER_KEY = "users/individual";
 
 const USER_INITIAL_DATA = {
-  id: '',
-  email: '',
-  name: '',
+  id: "",
+  email: "",
+  name: "",
   role: UserScopes.Unverified,
   authenticated: false,
 };
@@ -23,7 +23,7 @@ export const getUser = (id: string) => {
           return response.data;
         })
         .catch((error) => {
-          console.error('Error when getting all users', error);
+          console.error("Error when getting all users", error);
           throw error;
         });
     },
@@ -35,14 +35,18 @@ export const createUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (req: { email: string, password: string, name: string }): Promise<IUser> => {
+    mutationFn: async (req: {
+      email: string;
+      password: string;
+      name: string;
+    }): Promise<IUser> => {
       return axios
         .post<IUser>(`${SERVER_URL}users/`, req)
         .then((response) => {
           return response.data;
         })
         .catch((error) => {
-          alert('Error when creating user: ' + error);
+          alert("Error when creating user: " + error);
           throw error;
         });
     },
@@ -56,14 +60,19 @@ export const updateUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (req: { id: string, email: string, password: string, role: UserScopes }): Promise<IUser> => {
+    mutationFn: async (req: {
+      id: string;
+      email: string;
+      password: string;
+      role: UserScopes;
+    }): Promise<IUser> => {
       return axios
         .patch(`${SERVER_URL}users/${req.id}`, req)
         .then((response) => {
           return response.data;
         })
         .catch((error) => {
-          alert('Error when getting user' + error);
+          alert("Error when getting user" + error);
           throw error;
         });
     },
@@ -84,7 +93,7 @@ export const deleteUser = () => {
           return req.id;
         })
         .catch((error) => {
-          alert('Error when getting user' + error);
+          alert("Error when getting user" + error);
           throw error;
         });
     },

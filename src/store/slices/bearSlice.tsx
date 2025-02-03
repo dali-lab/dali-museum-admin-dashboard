@@ -1,8 +1,8 @@
-import { StateCreator } from 'zustand';
+import { StateCreator } from "zustand";
 
 export interface IBearSlice {
-  bearCount: number
-  addBear: () => void
+  bearCount: number;
+  addBear: () => void;
 }
 
 const bearSlice: StateCreator<IBearSlice, [], [], IBearSlice> = (set) => ({

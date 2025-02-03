@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-import { SERVER_URL } from '@/utils/constants';
-import axios from 'axios';
+import { useQuery } from "@tanstack/react-query";
+import { SERVER_URL } from "@/utils/constants";
+import axios from "axios";
 
-const CONNECTION_KEY = 'connection';
+const CONNECTION_KEY = "connection";
 
 export const getConnection = () => {
   return useQuery({
