@@ -1,22 +1,22 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { BsBoxArrowLeft } from 'react-icons/bs';
-import './styles.scss';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { BsBoxArrowLeft } from "react-icons/bs";
+import "./styles.scss";
 
-interface AppPhotoProps {
-  title: string,
-  toLink: string,
+interface PageHeaderProps {
+  title: string;
+  toLink: string;
   children?: React.ReactNode;
 }
 
-const PageHeader = ({ title, toLink, children }: AppPhotoProps) => {
+const PageHeader = ({ title, toLink, children }: PageHeaderProps) => {
   const navigate = useNavigate();
   return (
-    <div className='page-header'>
+    <div className="page-header">
       <BsBoxArrowLeft
-        className='button'
+        className="button"
         onClick={() => navigate(toLink)}
-        style={{ fontSize: '40' }}
+        style={{ fontSize: "40" }}
       />
       <h1>{title}</h1>
       {<>{children}</>}

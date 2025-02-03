@@ -1,13 +1,12 @@
 export enum UserScopes {
-  Unverified = 'UNVERIFIED',
-  User = 'USER',
-  Admin = 'ADMIN',
+  Unverified = "UNVERIFIED",
+  Admin = "ADMIN",
 }
 
 export interface IUser {
-  id: string
-  email: string
+  id: string;
+  email: string;
   // no password
-  name: string
-  role: UserScopes
+  name: string;
+  role: UserScopes;
 }

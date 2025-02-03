@@ -1,8 +1,8 @@
-import { StateCreator } from 'zustand';
+import { StateCreator } from "zustand";
 
 export interface IFishSlice {
-  fishCount: number
-  addFish: () => void
+  fishCount: number;
+  addFish: () => void;
 }
 
 const fishSlice: StateCreator<IFishSlice, [], [], IFishSlice> = (set) => ({
