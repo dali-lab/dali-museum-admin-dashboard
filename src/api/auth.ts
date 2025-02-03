@@ -1,27 +1,27 @@
 /* eslint-disable @typescript-eslint/indent */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { SERVER_URL } from '@/utils/constants';
-import axios from 'axios';
-import { UserScopes } from '@/types/users';
-import { getBearerToken, setBearerToken } from '@/utils/localStorage';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { SERVER_URL } from "@/utils/constants";
+import axios from "axios";
+import { UserScopes } from "@/types/users";
+import { getBearerToken, setBearerToken } from "@/utils/localStorage";
 
 interface LoginResponse {
-  token: string
+  token: string;
   user: {
-    id: string
-    email: string
+    id: string;
+    email: string;
     // no password
-    name: string
-    role: UserScopes
-  }
+    name: string;
+    role: UserScopes;
+  };
 }
 
-const GET_AUTH_USER_DATA_KEY = 'auth/user';
+const GET_AUTH_USER_DATA_KEY = "auth/user";
 
 const USER_INITIAL_DATA = {
-  id: '',
-  email: '',
-  name: '',
+  id: "",
+  email: "",
+  name: "",
   role: UserScopes.Unverified,
   authenticated: false,
 };
@@ -43,8 +43,8 @@ export const logout = () => {
 
   return useMutation({
     mutationFn: async () => {
-      setCredentials('');
-      return '';
+      setCredentials("");
+      return "";
     },
     onSuccess: () => {
       queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], USER_INITIAL_DATA);
@@ -52,27 +52,20 @@ export const logout = () => {
   });
 };
 
-export const initCredentials = () => {
-  const token = getBearerToken();
-  if (token) {
-    setCredentials(token);
-  } else {
-    const { mutate: logoutMutate } = logout();
-    logoutMutate();
-  }
-};
-
 export const signUp = () => {
   return useMutation({
-    mutationFn: async (credentials: { email: string, password: string, name: string }) => {
-      return axios
-        .post(`${SERVER_URL}auth/signup`, credentials);
+    mutationFn: async (credentials: {
+      email: string;
+      password: string;
+      name: string;
+    }) => {
+      return axios.post(`${SERVER_URL}auth/signup`, credentials);
     },
     onSuccess: () => {
-      alert('Sign up successful!');
+      alert("Sign up successful!");
     },
     onError: (error) => {
-      alert('Error when signing up: ' + error);
+      alert("Error when signing up: " + error);
     },
   });
 };
@@ -81,7 +74,7 @@ export const signIn = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (credentials: { email: string, password: string }) => {
+    mutationFn: async (credentials: { email: string; password: string }) => {
       return axios
         .post<LoginResponse>(`${SERVER_URL}auth/signin`, credentials)
         .then((response) => {
@@ -93,14 +86,14 @@ export const signIn = () => {
             };
           }
           setCredentials(response.data.token); // TODO: Check async
-          alert('Signed In!');
+          alert("Signed In!");
           return { ...response.data };
         })
         .catch((error) => {
           alert(
-            'Unable to log in, please ensure your email and password are correct.',
+            "Unable to log in, please ensure your email and password are correct."
           );
-          console.error('Error when logging in', error);
+          console.error("Error when logging in", error);
           throw error;
         });
     },
@@ -120,9 +113,9 @@ export const jwtSignIn = () => {
     mutationFn: async () => {
       const token = await getBearerToken();
       if (!token) {
-        throw Error('null token');
+        throw Error("null token");
       }
-  
+
       return axios
         .get<LoginResponse>(`${SERVER_URL}auth/jwt-signin/`, {
           headers: {
@@ -137,7 +130,7 @@ export const jwtSignIn = () => {
         })
         .catch((err) => {
           console.error(err);
-          alert('Your login session has expired.');
+          alert("Your login session has expired.");
           throw err;
         });
     },
@@ -150,7 +143,7 @@ export const jwtSignIn = () => {
   });
 };
 
-export const resendCode = async (req: { id: string, email: string }) => {
+export const resendCode = async (req: { id: string; email: string }) => {
   return axios
     .post<LoginResponse>(`${SERVER_URL}auth/resend-code/${req.id}`, req)
     .then((response) => {
@@ -160,22 +153,22 @@ export const resendCode = async (req: { id: string, email: string }) => {
       return false;
     })
     .catch((error) => {
-      console.error('Error when sending code', error);
+      console.error("Error when sending code", error);
     });
 };
 
 export const verify = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async (req: { id: string, email: string, code: string }) => {
+    mutationFn: async (req: { id: string; email: string; code: string }) => {
       return axios
         .patch<LoginResponse>(`${SERVER_URL}auth/verify/${req.id}`, req)
         .then((response) => {
           return response.data;
         })
         .catch((err) => {
-          console.error('Error when verifying', err);
+          console.error("Error when verifying", err);
           throw err;
         });
     },
