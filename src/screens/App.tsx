@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ROUTES } from "@/utils/constants";
 import { UserScopes } from "@/types/users";
-import FrontPage from "./FrontPage";
+import DashboardPage from "./DashboardPage";
 import ErrorPage from "./ErrorPage";
 import ForbiddenPage from "./ForbiddenPage";
 import SignInPage from "./SignInPage";
 import SignUpPage from "./SignUpPage";
-import UsersPage from "./UsersPage";
-import ResourcesPage from "./ResourcesPage";
+import PaintingsPage from "./PaintingsPage";
+import HeatmapsPage from "./HeatmapsPage";
 import VerifyPage from "./VerifyPage";
 import { getConnection } from "@/api/connection";
 import { getAuthUser, jwtSignIn, logout, setCredentials } from "@/api/auth";
@@ -50,38 +50,43 @@ function App() {
     }
   }, [isConnected]);
 
-  if (!isConnected) return <ErrorPage />;
+  // if (!isConnected) return <ErrorPage />;
 
   return (
     <Router>
       <Routes>
-        <Route path={ROUTES.HOME} element={<FrontPage />} />
         <Route path={ROUTES.SIGNIN} element={<SignInPage />} />
         <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
         <Route
-          path={ROUTES.USERS}
-          element={
-            <ProtectedRoute allowableScopes={[UserScopes.Admin]}>
-              <UsersPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.RESOURCES}
-          element={
-            <ProtectedRoute
-              allowableScopes={[UserScopes.User, UserScopes.Admin]}
-            >
-              <ResourcesPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path={ROUTES.VERIFY}
           element={
-            <ProtectedRoute allowableScopes={[UserScopes.Unverified]}>
-              <VerifyPage />
-            </ProtectedRoute>
+            // <ProtectedRoute allowableScopes={[UserScopes.Unverified]}>
+            <VerifyPage />
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.DASHBOARD}
+          element={
+            // <ProtectedRoute allowableScopes={[UserScopes.Admin]}>
+            <DashboardPage />
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.PAINTINGS}
+          element={
+            // <ProtectedRoute allowableScopes={[UserScopes.Admin]}>
+            <PaintingsPage />
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.HEATMAPS}
+          element={
+            // <ProtectedRoute allowableScopes={[UserScopes.Admin]}>
+            <HeatmapsPage />
+            // </ProtectedRoute>
           }
         />
       </Routes>

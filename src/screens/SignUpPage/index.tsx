@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { signUp } from "@/api/auth";
+import { Link } from "react-router-dom";
+import { ROUTES } from "@/utils/constants";
 
 function SignUpPage() {
   const [name, setName] = useState<string>("");
@@ -53,6 +55,9 @@ function SignUpPage() {
         />
         <input type="submit" value="Sign Up" />
       </form>
+      <Link to={ROUTES.SIGNIN}>
+        <h1>or Sign In</h1>
+      </Link>
     </div>
   );
 }

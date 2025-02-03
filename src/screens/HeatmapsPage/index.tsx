@@ -10,7 +10,7 @@ import {
 } from "@/api/resources";
 import { IResource } from "@/types/resources";
 
-function ResourcePage() {
+function HeatmapsPage() {
   const [createTitle, setCreateTitle] = useState<string>("");
   const [createDescription, setCreateDescription] = useState<string>("");
   const [createValue, setCreateValue] = useState<string>("");
@@ -66,7 +66,10 @@ function ResourcePage() {
 
   return (
     <div className="container">
-      <PageHeader title={"Resource Page"} toLink={ROUTES.HOME}></PageHeader>
+      <PageHeader
+        title={"Resource Page"}
+        toLink={ROUTES.DASHBOARD}
+      ></PageHeader>
       {isResourcesLoading ? (
         <p>Loading...</p>
       ) : (
@@ -141,4 +144,4 @@ function ResourcePage() {
   );
 }
 
-export default ResourcePage;
+export default HeatmapsPage;

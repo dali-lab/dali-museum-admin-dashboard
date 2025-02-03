@@ -3,14 +3,21 @@ import PageHeader from "@/components/PageHeader";
 import { UserScopes } from "@/types/users";
 import { ROUTES } from "@/utils/constants";
 import { getUser, createUser, updateUser, deleteUser } from "@/api/users";
+import useBoundStore from "@/store";
 
-function UsersPage() {
+function PaintingsPage() {
   const [getId, setGetId] = useState<string>("");
 
   const { data: selectedUser, isLoading: isUsersLoading } = getUser(getId);
   const { mutate: mutateCreateUser } = createUser();
   const { mutate: mutateUpdateUser } = updateUser();
   const { mutate: mutateDeleteUser } = deleteUser();
+
+  const bearCount = useBoundStore((state) => state.bearCount);
+  const fishCount = useBoundStore((state) => state.fishCount);
+
+  const addBear = useBoundStore((state) => state.addBear);
+  const addFish = useBoundStore((state) => state.addFish);
 
   const handleGetUserSubmit = () => {
     if (!getId) alert("Please enter an id!");
@@ -67,7 +74,17 @@ function UsersPage() {
 
   return (
     <div className="container">
-      <PageHeader title={"Resource Page"} toLink={ROUTES.HOME}></PageHeader>
+      <PageHeader
+        title={"Resource Page"}
+        toLink={ROUTES.DASHBOARD}
+      ></PageHeader>
+
+      <div>
+        (bears, fish) = ({bearCount}, {fishCount})
+      </div>
+      <button onClick={() => addBear()}>Add bear</button>
+      <button onClick={() => addFish()}>Add fish</button>
+
       {isUsersLoading ? (
         <p>Loading...</p>
       ) : (
@@ -139,7 +156,7 @@ function UsersPage() {
               <option value={UserScopes.Unverified}>
                 {UserScopes.Unverified}
               </option>
-              <option value={UserScopes.User}>{UserScopes.User}</option>
+              {/* <option value={UserScopes.User}>{UserScopes.User}</option> */}
               <option value={UserScopes.Admin}>{UserScopes.Admin}</option>
             </select>
             <input type="submit" value="Update User" />
@@ -159,4 +176,4 @@ function UsersPage() {
   );
 }
 
-export default UsersPage;
+export default PaintingsPage;
