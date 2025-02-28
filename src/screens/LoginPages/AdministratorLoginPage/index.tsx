@@ -1,18 +1,16 @@
-// src/screens/SignUpPage.tsx
+// src/screens/AdministratorLoginPage.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./SignUpPage.css";
-import daliLogo from "../../assets/dali_light.png";
+import "../LoginPage.css";
+import daliLogo from "../../../assets/dali_light.png";
 
-const SignUpPage: React.FC = () => {
+const AdministratorLoginPage: React.FC = () => {
   const navigate = useNavigate();
   
   // State for form fields with empty initial values
   const [formData, setFormData] = useState({
-    id: "",
-    email: "",
+    userId: "",
     password: "",
-    confirmPassword: "",
   });
 
   // Handle input changes
@@ -25,42 +23,35 @@ const SignUpPage: React.FC = () => {
   };
 
   const handleBackClick = () => {
-    navigate("/role-selection"); // Go back to role selection
+    navigate("/");
   };
 
   const handleConfirmClick = () => {
-    console.log("Confirm button clicked with data:", formData);
-    // Add functionality later
+    console.log("Administrator login attempt with:", formData);
+    // Add authentication logic later
+  };
+
+  const handleForgotDetails = () => {
+    console.log("Forgot details clicked");
+    // Add password recovery flow later
   };
 
   return (
-    <div className="signup-container">
+    <div className="login-container">
       <button className="back-button" onClick={handleBackClick}>
         Back
       </button>
 
-      <h1 className="signup-title">Sign Up</h1>
+      <h1 className="login-title">Administrator Log In</h1>
       
-      <div className="signup-form">
+      <div className="login-form">
         <div className="form-group">
-          <label htmlFor="id">[Museum Or University] ID</label>
+          <label htmlFor="userId">User ID</label>
           <input 
             type="text" 
-            id="id" 
+            id="userId" 
             className="form-input"
-            value={formData.id}
-            onChange={handleChange}
-            placeholder=""
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="email">Work/School Email Address</label>
-          <input 
-            type="email" 
-            id="email" 
-            className="form-input"
-            value={formData.email}
+            value={formData.userId}
             onChange={handleChange}
             placeholder=""
           />
@@ -78,23 +69,18 @@ const SignUpPage: React.FC = () => {
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input 
-            type="password" 
-            id="confirmPassword" 
-            className="form-input"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            placeholder=""
-          />
-        </div>
-
         <button 
           className="confirm-button"
           onClick={handleConfirmClick}
         >
           Confirm
+        </button>
+        
+        <button 
+          className="forgot-details-button"
+          onClick={handleForgotDetails}
+        >
+          Forgot Details?
         </button>
       </div>
       
@@ -111,4 +97,4 @@ const SignUpPage: React.FC = () => {
   );
 };
 
-export default SignUpPage;
+export default AdministratorLoginPage;

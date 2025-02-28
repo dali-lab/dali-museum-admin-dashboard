@@ -9,6 +9,10 @@ import SignInPage from "./SignInPage";
 import SignUpPage from "./SignUpPage";
 import PaintingsPage from "./PaintingsPage";
 import HeatmapsPage from "./HeatmapsPage";
+import WelcomeScreen from "@/screens/WelcomeScreen";
+import RoleSelectionPage from "@/screens/RoleSelectionPage";
+import ResearcherLoginPage from "@/screens/LoginPages/ResearcherLoginPage";
+import AdministratorLoginPage from "@/screens/LoginPages/AdministratorLoginPage";
 import VerifyPage from "./VerifyPage";
 import { getConnection } from "@/api/connection";
 import { getAuthUser, jwtSignIn, logout, setCredentials } from "@/api/auth";
@@ -21,18 +25,16 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ allowableScopes, children }: ProtectedRouteProps) => {
   const { authenticated, role } = getAuthUser().data;
-
   if (!allowableScopes.includes(role) || !authenticated) {
     return <ForbiddenPage />;
   }
-
   return <>{children}</>;
 };
 
 function App() {
   const { isConnected } = getConnection().data;
   const { mutate: logoutMutate } = logout();
-
+  
   useEffect(() => {
     const token = getBearerToken();
     if (token) {
@@ -41,22 +43,25 @@ function App() {
       logoutMutate();
     }
   }, []);
-
+  
   const { mutate: mutateJwtSignIn } = jwtSignIn();
-
+  
   useEffect(() => {
     if (isConnected) {
       mutateJwtSignIn();
     }
   }, [isConnected]);
-
+  
   // if (!isConnected) return <ErrorPage />;
-
+  
   return (
     <Router>
       <Routes>
-        <Route path={ROUTES.SIGNIN} element={<SignInPage />} />
+        <Route path="/" element={<WelcomeScreen />} />
+        <Route path="/role-selection" element={<RoleSelectionPage />} />
         <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
+        <Route path={ROUTES.RESEARCHER_LOGIN} element={<ResearcherLoginPage />} />
+        <Route path={ROUTES.ADMIN_LOGIN} element={<AdministratorLoginPage />} />
         <Route
           path={ROUTES.VERIFY}
           element={
