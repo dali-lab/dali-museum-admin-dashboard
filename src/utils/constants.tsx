@@ -11,4 +11,5 @@ export const ROUTES = {
   PAINTINGS: "/paintings",
   HEATMAPS: "/heatmaps",
   USERS: "/users",
+  ADMIN_REQUESTS: "/admin-requests",
 };

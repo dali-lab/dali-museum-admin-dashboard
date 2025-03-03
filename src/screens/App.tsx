@@ -14,6 +14,7 @@ import RoleSelectionPage from "@/screens/RoleSelectionPage";
 import ResearcherLoginPage from "@/screens/LoginPages/ResearcherLoginPage";
 import AdministratorLoginPage from "@/screens/LoginPages/AdministratorLoginPage";
 import VerifyPage from "./VerifyPage";
+import AdminRequests from "@/screens/AdminRequests"; // Import the AdminRequests component
 import { getConnection } from "@/api/connection";
 import { getAuthUser, jwtSignIn, logout, setCredentials } from "@/api/auth";
 import { getBearerToken, setBearerToken } from "@/utils/localStorage";
@@ -62,6 +63,8 @@ function App() {
         <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
         <Route path={ROUTES.RESEARCHER_LOGIN} element={<ResearcherLoginPage />} />
         <Route path={ROUTES.ADMIN_LOGIN} element={<AdministratorLoginPage />} />
+        {/* Add the AdminRequests route */}
+        <Route path="/admin-requests" element={<AdminRequests />} />
         <Route
           path={ROUTES.VERIFY}
           element={

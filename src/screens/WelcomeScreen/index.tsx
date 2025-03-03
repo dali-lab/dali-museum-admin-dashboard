@@ -7,21 +7,26 @@ import { ROUTES } from "@/utils/constants";
 
 const WelcomeScreen: React.FC = () => {
   const navigate = useNavigate();
-
+  
   // Handler for the Sign Up button
   const handleSignUpClick = () => {
     navigate(ROUTES.ROLE_SELECTION);
   };
-
+  
   // Handlers for the role tiles
   const handleResearcherClick = () => {
     navigate(ROUTES.RESEARCHER_LOGIN);
   };
-
+  
   const handleAdministratorClick = () => {
     navigate(ROUTES.ADMIN_LOGIN);
   };
-
+  
+  // Handler for the temporary admin approval button
+  const handleAdminApprovalClick = () => {
+    navigate(ROUTES.ADMIN_REQUESTS);
+  };
+  
   return (
     <div className="welcome-container">
       <h1 className="welcome-title">Welcome</h1>
@@ -56,6 +61,14 @@ const WelcomeScreen: React.FC = () => {
           <p>Log In</p>
         </button>
       </div>
+      
+      {/* Temporary Admin Approval Button */}
+      <button 
+        className="temp-admin-approval-button"
+        onClick={handleAdminApprovalClick}
+      >
+        Temporary: Go to Admin Approval Page
+      </button>
       
       <div className="footer">
         <div className="logo-container">
