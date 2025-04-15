@@ -35,7 +35,7 @@ const ProtectedRoute = ({ allowableScopes, children }: ProtectedRouteProps) => {
 function App() {
   const { isConnected } = getConnection().data;
   const { mutate: logoutMutate } = logout();
-  
+
   useEffect(() => {
     const token = getBearerToken();
     if (token) {
@@ -44,27 +44,30 @@ function App() {
       logoutMutate();
     }
   }, []);
-  
+
   const { mutate: mutateJwtSignIn } = jwtSignIn();
-  
+
   useEffect(() => {
     if (isConnected) {
       mutateJwtSignIn();
     }
   }, [isConnected]);
-  
+
   // if (!isConnected) return <ErrorPage />;
-  
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={<WelcomeScreen />} />
-        <Route path="/role-selection" element={<RoleSelectionPage />} />
+        <Route path={ROUTES.ROLE_SELECTION} element={<RoleSelectionPage />} />
         <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
-        <Route path={ROUTES.RESEARCHER_LOGIN} element={<ResearcherLoginPage />} />
+        <Route
+          path={ROUTES.RESEARCHER_LOGIN}
+          element={<ResearcherLoginPage />}
+        />
         <Route path={ROUTES.ADMIN_LOGIN} element={<AdministratorLoginPage />} />
         {/* Add the AdminRequests route */}
-        <Route path="/admin-requests" element={<AdminRequests />} />
+        <Route path={ROUTES.ADMIN_REQUESTS} element={<AdminRequests />} />
         <Route
           path={ROUTES.VERIFY}
           element={

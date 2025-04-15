@@ -1,178 +1,134 @@
-import React, { useState } from "react";
+import React, { useCallback } from "react";
 import PageHeader from "@/components/PageHeader";
-import { UserScopes } from "@/types/users";
-import { ROUTES } from "@/utils/constants";
-import { getUser, createUser, updateUser, deleteUser } from "@/api/users";
-import useBoundStore from "@/store";
+import Toggle from "@/components/Toggle";
+import { getPaintings, createPainting, updatePainting } from "@/api/paintings";
+import { paintingFeatures } from "@/utils";
+import Tag from "@/components/Tag";
+import "./styles.scss";
 
 function PaintingsPage() {
-  const [getId, setGetId] = useState<string>("");
+  const { data: paintings, isLoading } = getPaintings();
 
-  const { data: selectedUser, isLoading: isUsersLoading } = getUser(getId);
-  const { mutate: mutateCreateUser } = createUser();
-  const { mutate: mutateUpdateUser } = updateUser();
-  const { mutate: mutateDeleteUser } = deleteUser();
+  const { mutate: mutateCreatePainting } = createPainting();
+  const { mutate: mutateUpdatePainting } = updatePainting();
 
-  const bearCount = useBoundStore((state) => state.bearCount);
-  const fishCount = useBoundStore((state) => state.fishCount);
+  // TODO
+  const handleUploadPaintingSubmit = useCallback(() => {
+    // upload painting to s3...
+    const url = "s3 url";
 
-  const addBear = useBoundStore((state) => state.addBear);
-  const addFish = useBoundStore((state) => state.addFish);
+    // make create painting request to backend
+    mutateCreatePainting({
+      url,
+    });
 
-  const handleGetUserSubmit = () => {
-    if (!getId) alert("Please enter an id!");
-    // else {
-    //   dispatch(getUser({ id: getId }));
-    // }
-  };
+    // navigate to painting editing pages
+  }, []);
 
-  const [createEmail, setCreateEmail] = useState<string>("");
-  const [createPassword, setCreatePassword] = useState<string>("");
-  const [createName, setCreateName] = useState<string>("");
-  const handleCreateUserSubmit = () => {
-    // Send only if all fields filled in
-    if (!createEmail) alert("Please enter an email!");
-    else if (!createPassword) alert("Please enter a password!");
-    else if (!createName) alert("Please enter a name!");
-    else {
-      mutateCreateUser({
-        email: createEmail,
-        password: createPassword,
-        name: createName,
-      });
-    }
-  };
+  // handle toggle for exhibition/research modes
+  const handleModeToggle = useCallback(
+    (paintingId: string, which: string, value: boolean) => {
+      mutateUpdatePainting({ id: paintingId, [which]: value });
+    },
+    []
+  );
 
-  const [updateId, setUpdateId] = useState<string>("");
-  const [updateEmail, setUpdateEmail] = useState<string>("");
-  const [updatePassword, setUpdatePassword] = useState<string>("");
-  const [updateName, setUpdateName] = useState<string>("");
-  const [updateRole, setUpdateRole] = useState<string>(UserScopes.Unverified);
-  const handleUpdateUserSubmit = () => {
-    if (!updateId) alert("Please enter an id!");
-    if (!updateEmail) alert("Please enter an email!");
-    else if (!updatePassword) alert("Please enter a password!");
-    else if (!updateName) alert("Please enter a name!");
-    else if (!updateRole) alert("Please enter a scope!");
-    else {
-      mutateUpdateUser({
-        id: updateId,
-        email: updateEmail,
-        password: updatePassword,
-        role: updateRole as UserScopes,
-      });
-    }
-  };
-
-  const [deleteId, setDeleteId] = useState<string>("");
-  const handleDeleteUserSubmit = () => {
-    if (!deleteId) alert("Please enter a id!");
-    else {
-      mutateDeleteUser({ id: deleteId });
-    }
+  const handleEditPainting = () => {
+    // navigate to painting editing pages
   };
 
   return (
-    <div className="container">
-      <PageHeader
-        title={"Resource Page"}
-        toLink={ROUTES.DASHBOARD}
-      ></PageHeader>
+    <>
+      <PageHeader title={"Manage HDIL"}></PageHeader>
+      <div className="paintings-container">
+        <div
+          style={{
+            alignSelf: "flex-end",
+            display: "flex",
+            flexDirection: "row",
+            gap: "8px",
+          }}
+        >
+          <input placeholder="search"></input>
+          <button onClick={() => handleUploadPaintingSubmit()}>Add New</button>
+        </div>
 
-      <div>
-        (bears, fish) = ({bearCount}, {fishCount})
+        <div className="paintings-table-scrollable-container">
+          <table className="paintings-table">
+            <thead>
+              <tr>
+                <th style={{ width: "15%" }}>Preview</th>
+                <th style={{ width: "30%", textAlign: "left" }}>Title</th>
+                <th style={{ width: "20%" }}>Mode</th>
+                <th style={{ width: "15%" }}>Features</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={5}>
+                    <p>Loading...</p>
+                  </td>
+                </tr>
+              ) : (
+                paintings?.map((painting) => (
+                  <tr key={painting.id}>
+                    <td>
+                      <img
+                        className="preview"
+                        src={painting.url}
+                        alt={painting.name}
+                      />
+                    </td>
+                    <td style={{ textAlign: "left" }}>
+                      <p>{painting.name}</p>
+                    </td>
+                    <td>
+                      <div className="toggle-container">
+                        <Toggle
+                          label="Exhibition"
+                          value={painting.exhibitionEnabled}
+                          onChange={() =>
+                            handleModeToggle(
+                              painting.id,
+                              "exhibitionEnabled",
+                              !painting.exhibitionEnabled
+                            )
+                          }
+                        />
+                        <Toggle
+                          label="Research"
+                          value={false}
+                          onChange={() =>
+                            handleModeToggle(
+                              painting.id,
+                              "researchEnabled",
+                              !painting.researchEnabled
+                            )
+                          }
+                        />
+                      </div>
+                    </td>
+                    <td style={{ verticalAlign: "top" }}>
+                      <div className="tag-container">
+                        {paintingFeatures(painting).map((feature) => (
+                          <Tag label={feature.title} color={feature.color} />
+                        ))}
+                      </div>
+                    </td>
+                    <td>
+                      <button onClick={() => handleEditPainting()}>Edit</button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <button onClick={() => addBear()}>Add bear</button>
-      <button onClick={() => addFish()}>Add fish</button>
-
-      {isUsersLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          {selectedUser ? (
-            <h5>
-              Current selected user: {selectedUser.id}, {selectedUser.email},{" "}
-              {selectedUser.name}, {selectedUser.role}
-            </h5>
-          ) : (
-            <h5>Current selected user:</h5>
-          )}
-          <form onSubmit={handleGetUserSubmit}>
-            <input
-              type="text"
-              placeholder="id"
-              value={getId}
-              onChange={(e) => setGetId(e.target.value)}
-            />
-            <input type="submit" value="Get User" />
-          </form>
-          <form onSubmit={handleCreateUserSubmit}>
-            <input
-              type="email"
-              placeholder="Email"
-              value={createEmail}
-              onChange={(e) => setCreateEmail(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={createPassword}
-              onChange={(e) => setCreatePassword(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Name"
-              value={createName}
-              onChange={(e) => setCreateName(e.target.value)}
-            />
-            <input type="submit" value="Create User" />
-          </form>
-          <form onSubmit={handleUpdateUserSubmit}>
-            <input
-              type="text"
-              placeholder="id"
-              value={updateId}
-              onChange={(e) => setUpdateId(e.target.value)}
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={updateEmail}
-              onChange={(e) => setUpdateEmail(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={updatePassword}
-              onChange={(e) => setUpdatePassword(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Name"
-              value={updateName}
-              onChange={(e) => setUpdateName(e.target.value)}
-            />
-            <select onChange={(e) => setUpdateRole(e.target.value)}>
-              <option value={UserScopes.Unverified}>
-                {UserScopes.Unverified}
-              </option>
-              {/* <option value={UserScopes.User}>{UserScopes.User}</option> */}
-              <option value={UserScopes.Admin}>{UserScopes.Admin}</option>
-            </select>
-            <input type="submit" value="Update User" />
-          </form>
-          <form onSubmit={handleDeleteUserSubmit}>
-            <input
-              type="text"
-              placeholder="id"
-              value={deleteId}
-              onChange={(e) => setDeleteId(e.target.value)}
-            />
-            <input type="submit" value="Delete User" />
-          </form>
-        </>
-      )}
-    </div>
+    </>
   );
 }
 
