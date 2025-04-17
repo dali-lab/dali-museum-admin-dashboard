@@ -21,19 +21,14 @@ export function paintingFeatures(painting: IPainting) {
   ) {
     features.push(FEATURES.ANNOTATIONS);
   }
-  // TODO remove random chance to get feature (it's for testing)
   if (
-    Math.random() < 0.5 ||
-    (painting.curatorHeatmap &&
-      painting.curatorHeatmap.length &&
-      painting.curatorHeatmap.length > 0)
+    painting.curatorHeatmap &&
+    painting.curatorHeatmap.length &&
+    painting.curatorHeatmap.length > 0
   ) {
     features.push(FEATURES.CURATOR_HEATMAP);
   }
-  if (
-    Math.random() < 0.5 ||
-    (painting.activePostviewImage && painting.activePostviewImage != "")
-  ) {
+  if (painting.activePostviewImage && painting.activePostviewImage != "") {
     features.push(FEATURES.POST_VIEWING);
   }
 

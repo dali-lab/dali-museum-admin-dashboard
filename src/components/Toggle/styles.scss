@@ -5,4 +5,12 @@
   flex-direction: row;
   gap: 10px;
   align-items: center;
+
+  .toggle-button {
+    color: #9eeaf9;
+  }
+
+  .toggle-button.disabled {
+    color: #b72a2a;
+  }
 }

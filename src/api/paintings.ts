@@ -50,7 +50,7 @@ export const createPainting = () => {
           return response.data;
         })
         .catch((error) => {
-          alert("Error when creating painting: " + error);
+          console.error("Error when creating painting", error);
           throw error;
         });
     },
@@ -68,14 +68,20 @@ export const updatePainting = () => {
 
   return useMutation({
     mutationFn: async (req: Partial<IPainting>): Promise<IPainting> => {
+      const { id, ...body } = req;
       return axios
-        .patch(`${SERVER_URL}paintings/${req.id}`, req)
+        .put(`${SERVER_URL}paintings/${id}`, body)
         .then((response) => {
           return response.data;
         })
         .catch((error) => {
-          alert("Error when updating painting" + error);
-          throw error;
+          const message = error.response?.data?.errors
+            ? error.response.data.errors.join("; ")
+            : (error.message ?? error);
+
+          console.error("Error when updating painting: " + message);
+
+          throw Error(message);
         });
     },
     onSuccess: (payload: IPainting) => {
@@ -98,8 +104,13 @@ export const deletePainting = () => {
           return req.id;
         })
         .catch((error) => {
-          alert("Error when deleting painting" + error);
-          throw error;
+          const message = error.response?.data?.errors
+            ? error.response.data.errors.join("; ")
+            : (error.message ?? error);
+
+          console.error("Error when deleting painting: " + message);
+
+          throw Error(message);
         });
     },
     onSuccess: (deletedId: string) => {

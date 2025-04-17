@@ -29,4 +29,7 @@ export interface IPainting {
 
   exhibitionEnabled: boolean;
   researchEnabled: boolean;
+
+  exhibitionPossible: boolean;
+  researchPossible: boolean;
 }

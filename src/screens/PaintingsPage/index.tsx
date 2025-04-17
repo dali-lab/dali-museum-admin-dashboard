@@ -28,7 +28,14 @@ function PaintingsPage() {
   // handle toggle for exhibition/research modes
   const handleModeToggle = useCallback(
     (paintingId: string, which: string, value: boolean) => {
-      mutateUpdatePainting({ id: paintingId, [which]: value });
+      mutateUpdatePainting(
+        { id: paintingId, [which]: value },
+        {
+          onError: (error) => {
+            alert(error.message);
+          },
+        }
+      );
     },
     []
   );
@@ -89,6 +96,7 @@ function PaintingsPage() {
                       <div className="toggle-container">
                         <Toggle
                           label="Exhibition"
+                          disabled={!painting.exhibitionPossible}
                           value={painting.exhibitionEnabled}
                           onChange={() =>
                             handleModeToggle(
@@ -100,7 +108,8 @@ function PaintingsPage() {
                         />
                         <Toggle
                           label="Research"
-                          value={false}
+                          disabled={!painting.researchPossible}
+                          value={painting.researchEnabled}
                           onChange={() =>
                             handleModeToggle(
                               painting.id,
@@ -114,7 +123,11 @@ function PaintingsPage() {
                     <td style={{ verticalAlign: "top" }}>
                       <div className="tag-container">
                         {paintingFeatures(painting).map((feature) => (
-                          <Tag label={feature.title} color={feature.color} />
+                          <Tag
+                            key={feature.title}
+                            label={feature.title}
+                            color={feature.color}
+                          />
                         ))}
                       </div>
                     </td>
