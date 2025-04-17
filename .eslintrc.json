@@ -16,6 +16,7 @@
   "rules": {
     "no-console": "off",
     "comma-dangle": "off",
+    "@typescript-eslint/comma-dangle": "off",
     "linebreak-style": "off",
     "no-underscore-dangle": "off",
     "max-len": ["error", { "code": 200 }],
