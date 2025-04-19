@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import Toggle from "@/components/Toggle";
 import { getPaintings, createPainting, updatePainting } from "@/api/paintings";
@@ -11,6 +11,8 @@ function PaintingsPage() {
 
   const { mutate: mutateCreatePainting } = createPainting();
   const { mutate: mutateUpdatePainting } = updatePainting();
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   // TODO
   const handleUploadPaintingSubmit = useCallback(() => {
@@ -44,20 +46,40 @@ function PaintingsPage() {
     // navigate to painting editing pages
   };
 
+  const searchedPaintings = useMemo(() => {
+    // return only paintings that match the search term
+    if (!searchTerm) return paintings;
+    return paintings?.filter((painting) =>
+      painting.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [paintings, searchTerm]);
+
   return (
     <>
       <PageHeader title={"Manage HDIL"}></PageHeader>
       <div className="paintings-container">
         <div
           style={{
-            alignSelf: "flex-end",
+            width: "100%",
             display: "flex",
             flexDirection: "row",
+            justifyContent: "space-between",
             gap: "8px",
           }}
         >
-          <input placeholder="search"></input>
-          <button onClick={() => handleUploadPaintingSubmit()}>Add New</button>
+          <input
+            placeholder="search"
+            style={{ width: 400 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          <button
+            className="primary"
+            onClick={() => handleUploadPaintingSubmit()}
+          >
+            Add New
+          </button>
         </div>
 
         <div className="paintings-table-scrollable-container">
@@ -80,7 +102,7 @@ function PaintingsPage() {
                   </td>
                 </tr>
               ) : (
-                paintings?.map((painting) => (
+                searchedPaintings?.map((painting) => (
                   <tr key={painting.id}>
                     <td>
                       <img
@@ -132,7 +154,12 @@ function PaintingsPage() {
                       </div>
                     </td>
                     <td>
-                      <button onClick={() => handleEditPainting()}>Edit</button>
+                      <button
+                        className="primary"
+                        onClick={() => handleEditPainting()}
+                      >
+                        Edit
+                      </button>
                     </td>
                   </tr>
                 ))

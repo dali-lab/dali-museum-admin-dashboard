@@ -18,6 +18,7 @@ import AdminRequests from "@/screens/AdminRequests"; // Import the AdminRequests
 import { getConnection } from "@/api/connection";
 import { getAuthUser, jwtSignIn, logout, setCredentials } from "@/api/auth";
 import { getBearerToken, setBearerToken } from "@/utils/localStorage";
+import AccountSettingsPage from "./AccountSettingsPage";
 
 interface ProtectedRouteProps {
   allowableScopes: UserScopes[];
@@ -59,15 +60,14 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<WelcomeScreen />} />
-        <Route path={ROUTES.ROLE_SELECTION} element={<RoleSelectionPage />} />
-        <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
         <Route
           path={ROUTES.RESEARCHER_LOGIN}
           element={<ResearcherLoginPage />}
         />
         <Route path={ROUTES.ADMIN_LOGIN} element={<AdministratorLoginPage />} />
-        {/* Add the AdminRequests route */}
-        <Route path={ROUTES.ADMIN_REQUESTS} element={<AdminRequests />} />
+
+        <Route path={ROUTES.ROLE_SELECTION} element={<RoleSelectionPage />} />
+        <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
         <Route
           path={ROUTES.VERIFY}
           element={
@@ -76,6 +76,10 @@ function App() {
             // </ProtectedRoute>
           }
         />
+
+        <Route path={ROUTES.ADMIN_REQUESTS} element={<AdminRequests />} />
+        <Route path={ROUTES.SETTINGS} element={<AccountSettingsPage />} />
+
         <Route
           path={ROUTES.DASHBOARD}
           element={
