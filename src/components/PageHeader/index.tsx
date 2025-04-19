@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   BsBell,
   BsBellFill,
@@ -18,25 +18,29 @@ interface PageHeaderProps {
 }
 
 const PageHeader = ({ title, children, selected }: PageHeaderProps) => {
-  const navigate = useNavigate();
-
   const props = { className: "header-icon", size: 30 };
   return (
     <div className="page-header">
       {selected == ROUTES.SETTINGS ? (
         <BsGearFill {...props} style={{ color: "#AAEAE5" }} />
       ) : (
-        <BsGear {...props} onClick={() => navigate(ROUTES.SETTINGS)} />
+        <Link to={ROUTES.SETTINGS}>
+          <BsGear {...props} />
+        </Link>
       )}
       {selected == ROUTES.DASHBOARD ? (
         <BsHouseFill {...props} style={{ color: "#AAEAE5" }} />
       ) : (
-        <BsHouse {...props} onClick={() => navigate(ROUTES.DASHBOARD)} />
+        <Link to={ROUTES.DASHBOARD}>
+          <BsHouse {...props} />
+        </Link>
       )}
       {selected == ROUTES.ADMIN_REQUESTS ? (
         <BsBellFill {...props} style={{ color: "#AAEAE5" }} />
       ) : (
-        <BsBell {...props} onClick={() => navigate(ROUTES.ADMIN_REQUESTS)} />
+        <Link to={ROUTES.ADMIN_REQUESTS}>
+          <BsBell {...props} />
+        </Link>
       )}
 
       <h1 className="title">{title}</h1>
