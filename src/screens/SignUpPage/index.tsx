@@ -3,10 +3,15 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SignUpPage.css";
 import daliLogo from "../../assets/dali_light.png";
+import { UserScopes } from "@/types/users";
 
-const SignUpPage: React.FC = () => {
+interface SignupPageProps {
+  role: UserScopes;
+}
+
+const SignUpPage: React.FC<SignupPageProps> = ({ role }) => {
   const navigate = useNavigate();
-  
+
   // State for form fields with empty initial values
   const [formData, setFormData] = useState({
     id: "",
@@ -18,7 +23,7 @@ const SignUpPage: React.FC = () => {
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
       [id]: value,
     }));
@@ -40,13 +45,15 @@ const SignUpPage: React.FC = () => {
       </button>
 
       <h1 className="signup-title">Sign Up</h1>
-      
+
       <div className="signup-form">
         <div className="form-group">
-          <label htmlFor="id">[Museum Or University] ID</label>
-          <input 
-            type="text" 
-            id="id" 
+          <label htmlFor="id">
+            {role == UserScopes.Admin ? "Museum" : "University"} ID
+          </label>
+          <input
+            type="text"
+            id="id"
             className="form-input"
             value={formData.id}
             onChange={handleChange}
@@ -56,9 +63,9 @@ const SignUpPage: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="email">Work/School Email Address</label>
-          <input 
-            type="email" 
-            id="email" 
+          <input
+            type="email"
+            id="email"
             className="form-input"
             value={formData.email}
             onChange={handleChange}
@@ -68,9 +75,9 @@ const SignUpPage: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="password">Password</label>
-          <input 
-            type="password" 
-            id="password" 
+          <input
+            type="password"
+            id="password"
             className="form-input"
             value={formData.password}
             onChange={handleChange}
@@ -80,9 +87,9 @@ const SignUpPage: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="confirmPassword">Confirm Password</label>
-          <input 
-            type="password" 
-            id="confirmPassword" 
+          <input
+            type="password"
+            id="confirmPassword"
             className="form-input"
             value={formData.confirmPassword}
             onChange={handleChange}
@@ -90,21 +97,19 @@ const SignUpPage: React.FC = () => {
           />
         </div>
 
-        <button 
-          className="confirm-button"
-          onClick={handleConfirmClick}
-        >
+        <button className="confirm-button" onClick={handleConfirmClick}>
           Confirm
         </button>
       </div>
-      
+
       <div className="footer">
         <div className="logo-container">
           <img src={daliLogo} alt="DALI Lab" className="dali-logo" />
         </div>
-        
+
         <div className="help-text">
-          how do i<br />look?
+          how do i<br />
+          look?
         </div>
       </div>
     </div>
