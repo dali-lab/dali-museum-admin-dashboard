@@ -47,7 +47,7 @@ function App() {
     } else {
       logoutMutate();
     }
-  }, []);
+  }, [logoutMutate]);
 
   const { mutate: mutateJwtSignIn } = jwtSignIn();
 
@@ -55,9 +55,7 @@ function App() {
     if (isConnected) {
       mutateJwtSignIn();
     }
-  }, [isConnected]);
-
-  // if (!isConnected) return <ErrorPage />;
+  }, [isConnected, mutateJwtSignIn]);
 
   return (
     <Router>
@@ -128,6 +126,8 @@ function App() {
             // </ProtectedRoute>
           }
         /> */}
+        <Route path={ROUTES.NOT_FOUND} element={<ErrorPage />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
   );

@@ -1,16 +1,18 @@
 import Tabs from "@/components/Tabs";
 import { ROUTES } from "@/utils/constants";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Link,
-  Navigate,
   Outlet,
   useLocation,
+  useNavigate,
   useParams,
 } from "react-router-dom";
 import "./styles.scss";
+import { getPainting } from "@/api/paintings";
 
 const EditPaintingPage: React.FC = () => {
+  const navigate = useNavigate();
   const { paintingId } = useParams();
   const location = useLocation();
 
@@ -20,13 +22,25 @@ const EditPaintingPage: React.FC = () => {
       location.pathname
         .replace(`${ROUTES.PAINTINGS}/${paintingId}`, "")
         .replace(/^\/+|\/+$/g, ""), // remove slahes at beginning and end
-    [location]
+    [location.pathname, paintingId]
   );
 
   // if my path is just /paintings/:paintingId, redirect to the basic info route
-  if (selectedRoute === "") {
-    return <Navigate to={ROUTES.EDIT_BASIC_INFO} />;
-  }
+  useEffect(() => {
+    if (selectedRoute === "") {
+      navigate(ROUTES.EDIT_BASIC_INFO, { replace: true });
+    }
+  }, [navigate, selectedRoute]);
+
+  // ensure painting exists by fetching from db
+  const { data: painting, isFetched } = getPainting(paintingId ?? "", {
+    retry: false,
+  });
+  useEffect(() => {
+    if (isFetched && !painting) {
+      navigate(ROUTES.NOT_FOUND, { replace: true });
+    }
+  }, [isFetched, navigate, painting]);
 
   return (
     <div className="edit-painting-container">

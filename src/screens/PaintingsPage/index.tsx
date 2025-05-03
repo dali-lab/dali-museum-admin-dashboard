@@ -113,7 +113,7 @@ function PaintingsPage() {
                       />
                     </td>
                     <td style={{ textAlign: "left" }}>
-                      <p>{painting.name}</p>
+                      <p>{painting.alias}</p>
                     </td>
                     <td>
                       <div className="toggle-container">

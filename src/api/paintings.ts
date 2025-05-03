@@ -22,7 +22,10 @@ export const getPaintings = () => {
 };
 
 const GET_PAINTING_KEY = "painting/byId";
-export const getPainting = (id: string) => {
+export const getPainting = (
+  id: string,
+  options?: { retry: boolean | number }
+) => {
   return useQuery({
     queryKey: [GET_PAINTING_KEY, id],
     queryFn: async (): Promise<IPainting | null> => {
@@ -32,10 +35,14 @@ export const getPainting = (id: string) => {
           return response.data;
         })
         .catch((error) => {
-          console.error("Error when getting painting by id", error);
+          console.error(
+            "Error when getting painting by id",
+            error.response.data
+          );
           throw error;
         });
     },
+    retry: options?.retry ?? 3,
   });
 };
 

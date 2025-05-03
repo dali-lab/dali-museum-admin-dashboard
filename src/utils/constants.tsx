@@ -23,6 +23,8 @@ export const ROUTES = {
   EDIT_POSTVIEW_IMAGE: "postview-image",
 
   // HEATMAPS: "/heatmaps",
+
+  NOT_FOUND: "/not-found",
 };
 
 export const FEATURES = {
