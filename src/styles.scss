@@ -68,7 +68,8 @@ button.danger {
   color: white;
 }
 
-input {
+input,
+textarea {
   padding: 10px 16px;
   background-color: var(--secondary);
   border: none;

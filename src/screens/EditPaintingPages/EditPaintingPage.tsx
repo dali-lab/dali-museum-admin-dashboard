@@ -45,8 +45,6 @@ const EditPaintingPage: React.FC = () => {
         />
       </div>
       <div className="child-container">
-        <p>{selectedRoute}</p>
-
         {/* render child component based on route. see App.tsx */}
         <Outlet />
       </div>

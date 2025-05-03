@@ -6,7 +6,6 @@ import { paintingFeatures } from "@/utils";
 import Tag from "@/components/Tag";
 import "./styles.scss";
 import { Link, useNavigate } from "react-router-dom";
-import { ROUTES } from "@/utils/constants";
 
 function PaintingsPage() {
   const navigate = useNavigate();
@@ -31,7 +30,7 @@ function PaintingsPage() {
 
     // navigate to painting editing pages
     navigate(newId);
-  }, []);
+  }, [navigate]);
 
   // handle toggle for exhibition/research modes
   const handleModeToggle = useCallback(
@@ -45,7 +44,7 @@ function PaintingsPage() {
         }
       );
     },
-    []
+    [mutateUpdatePainting]
   );
 
   const searchedPaintings = useMemo(() => {

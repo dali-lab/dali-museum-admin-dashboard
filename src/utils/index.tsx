@@ -34,3 +34,13 @@ export function paintingFeatures(painting: IPainting) {
 
   return features;
 }
+
+/** return true if the value is a number or an empty string */
+export const isNumber = (value: string) => {
+  return /^\d*$/.test(value);
+};
+
+/** return the parsed number, or undefined if the value is an empty string. */
+export const parseNumber = (value: string) => {
+  return /^\d+$/.test(value) ? parseInt(value) : undefined;
+};
