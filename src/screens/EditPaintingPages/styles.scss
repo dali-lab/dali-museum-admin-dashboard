@@ -1,0 +1,17 @@
+.edit-painting-container {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+
+  .nav-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 12%;
+    align-items: center;
+  }
+
+  .child-container {
+    padding: 10px 0;
+  }
+}

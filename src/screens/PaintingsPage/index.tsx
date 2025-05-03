@@ -5,7 +5,7 @@ import { getPaintings, createPainting, updatePainting } from "@/api/paintings";
 import { paintingFeatures } from "@/utils";
 import Tag from "@/components/Tag";
 import "./styles.scss";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/utils/constants";
 
 function PaintingsPage() {
@@ -20,19 +20,17 @@ function PaintingsPage() {
 
   // TODO
   const handleUploadPaintingSubmit = useCallback(() => {
-    // upload painting to s3...
-    const url = "s3 url";
-
+    const file = ""; // TODO ?
     // make create painting request to backend
-    mutateCreatePainting({
-      url,
-    });
+    // this will upload it to s3
+    // const newId = mutateCreatePainting({
+    //   file,
+    // });
 
-    // get id from backend?
-    const id = "new id";
+    const newId = "new_painting_id"; // for testing
 
     // navigate to painting editing pages
-    navigate(/* ROUTES.EDIT_PAINTING + */ id);
+    navigate(newId);
   }, []);
 
   // handle toggle for exhibition/research modes
@@ -49,10 +47,6 @@ function PaintingsPage() {
     },
     []
   );
-
-  const handleEditPainting = () => {
-    // navigate to painting editing pages
-  };
 
   const searchedPaintings = useMemo(() => {
     // return only paintings that match the search term
@@ -162,12 +156,9 @@ function PaintingsPage() {
                       </div>
                     </td>
                     <td>
-                      <button
-                        className="primary"
-                        onClick={() => handleEditPainting()}
-                      >
-                        Edit
-                      </button>
+                      <Link to={painting.id}>
+                        <button className="primary">Edit</button>
+                      </Link>
                     </td>
                   </tr>
                 ))

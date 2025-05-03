@@ -22,9 +22,9 @@ export function paintingFeatures(painting: IPainting) {
     features.push(FEATURES.ANNOTATIONS);
   }
   if (
-    painting.curatorHeatmap &&
-    painting.curatorHeatmap.length &&
-    painting.curatorHeatmap.length > 0
+    painting.curatorHeatmapPoints &&
+    painting.curatorHeatmapPoints.length &&
+    painting.curatorHeatmapPoints.length > 0
   ) {
     features.push(FEATURES.CURATOR_HEATMAP);
   }

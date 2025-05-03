@@ -17,6 +17,11 @@ import { getConnection } from "@/api/connection";
 import { getAuthUser, jwtSignIn, logout, setCredentials } from "@/api/auth";
 import { getBearerToken, setBearerToken } from "@/utils/localStorage";
 import AccountSettingsPage from "./AccountSettingsPage";
+import EditPaintingPage from "./EditPaintingPages/EditPaintingPage";
+import EditBasicInfoPage from "./EditPaintingPages/EditBasicInfoPage";
+import EditAnnotationsPage from "./EditPaintingPages/EditAnnotationsPage";
+import EditCuratorHeatmapPage from "./EditPaintingPages/EditCuratorHeatmapPage";
+import EditPostviewImagePage from "./EditPaintingPages/EditPostviewImagePage";
 
 interface ProtectedRouteProps {
   allowableScopes: UserScopes[];
@@ -93,6 +98,28 @@ function App() {
             // </ProtectedRoute>
           }
         />
+        {/* TODO protect these vvvv too */}
+        <Route
+          path={ROUTES.PAINTINGS + "/:paintingId"}
+          element={<EditPaintingPage />}
+        >
+          <Route
+            path={ROUTES.EDIT_BASIC_INFO}
+            element={<EditBasicInfoPage />}
+          />
+          <Route
+            path={ROUTES.EDIT_ANNOTATIONS}
+            element={<EditAnnotationsPage />}
+          />
+          <Route
+            path={ROUTES.EDIT_CURATOR_HEATMAP}
+            element={<EditCuratorHeatmapPage />}
+          />
+          <Route
+            path={ROUTES.EDIT_POSTVIEW_IMAGE}
+            element={<EditPostviewImagePage />}
+          />
+        </Route>
         {/* <Route
           path={ROUTES.HEATMAPS}
           element={
