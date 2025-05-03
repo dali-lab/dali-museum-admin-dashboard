@@ -5,7 +5,6 @@ import { UserScopes } from "@/types/users";
 import DashboardPage from "./DashboardPage";
 import ErrorPage from "./ErrorPage";
 import ForbiddenPage from "./ForbiddenPage";
-import SignInPage from "./SignInPage";
 import SignUpPage from "./SignUpPage";
 import PaintingsPage from "./PaintingsPage";
 import HeatmapsPage from "./HeatmapsPage";
@@ -13,7 +12,6 @@ import WelcomeScreen from "@/screens/WelcomeScreen";
 import RoleSelectionPage from "@/screens/RoleSelectionPage";
 import ResearcherLoginPage from "@/screens/LoginPages/ResearcherLoginPage";
 import AdministratorLoginPage from "@/screens/LoginPages/AdministratorLoginPage";
-import VerifyPage from "./VerifyPage";
 import AdminRequests from "@/screens/AdminRequests"; // Import the AdminRequests component
 import { getConnection } from "@/api/connection";
 import { getAuthUser, jwtSignIn, logout, setCredentials } from "@/api/auth";
@@ -59,23 +57,22 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<WelcomeScreen />} />
+        <Route path={ROUTES.ROLE_SELECTION} element={<RoleSelectionPage />} />
+        <Route
+          path={ROUTES.RESEARCHER_SIGNUP}
+          element={<SignUpPage role={UserScopes.Researcher} />}
+        />
+        <Route
+          path={ROUTES.ADMIN_SIGNUP}
+          element={<SignUpPage role={UserScopes.Admin} />}
+        />
+
+        <Route path={ROUTES.WELCOME} element={<WelcomeScreen />} />
         <Route
           path={ROUTES.RESEARCHER_LOGIN}
           element={<ResearcherLoginPage />}
         />
         <Route path={ROUTES.ADMIN_LOGIN} element={<AdministratorLoginPage />} />
-
-        <Route path={ROUTES.ROLE_SELECTION} element={<RoleSelectionPage />} />
-        <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
-        <Route
-          path={ROUTES.VERIFY}
-          element={
-            // <ProtectedRoute allowableScopes={[UserScopes.Unverified]}>
-            <VerifyPage />
-            // </ProtectedRoute>
-          }
-        />
 
         <Route path={ROUTES.ADMIN_REQUESTS} element={<AdminRequests />} />
         <Route path={ROUTES.SETTINGS} element={<AccountSettingsPage />} />
@@ -96,14 +93,14 @@ function App() {
             // </ProtectedRoute>
           }
         />
-        <Route
+        {/* <Route
           path={ROUTES.HEATMAPS}
           element={
             // <ProtectedRoute allowableScopes={[UserScopes.Admin]}>
             <HeatmapsPage />
             // </ProtectedRoute>
           }
-        />
+        /> */}
       </Routes>
     </Router>
   );

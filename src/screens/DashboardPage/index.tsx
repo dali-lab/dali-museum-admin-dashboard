@@ -21,17 +21,17 @@ function DashboardPage() {
           <div className="widget-row">
             <NavWidget>
               <p>Total Users Today</p>
-              <h2>124 users</h2>
+              <p className="big-text">124 users</p>
             </NavWidget>
 
             <NavWidget>
               <p>Total Time Spent Using</p>
-              <h2>5 hours</h2>
+              <p className="big-text">5 hours</p>
             </NavWidget>
 
             <NavWidget>
               <p>Avg. Minutes Spent Using</p>
-              <h2>7 minutes</h2>
+              <p className="big-text">7 minutes</p>
             </NavWidget>
           </div>
 

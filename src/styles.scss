@@ -1,5 +1,19 @@
+@font-face {
+  font-family: "Transducer";
+  src: url("/transducer/transducer-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "DIN 2014";
+  src: url("/din-2014/DIN2014-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
 * {
-  font-family: "Transducer", sans-serif;
+  font-family: "DIN 2014", sans-serif;
 
   --background: #000000;
   --text: #ffffff;
@@ -67,4 +81,15 @@ p,
 h1,
 h2 {
   margin: 0.5em 0px;
+}
+
+a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Transducer", sans-serif;
 }

@@ -1,6 +1,7 @@
 export enum UserScopes {
   Unverified = "UNVERIFIED",
   Admin = "ADMIN",
+  Researcher = "RESEARCHER",
 }
 
 export interface IUser {
