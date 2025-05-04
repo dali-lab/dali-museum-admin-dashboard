@@ -1,7 +1,8 @@
 .edit-painting-container {
   display: flex;
   flex-direction: row;
-  gap: 50px;
+  height: 100%;
+  width: 100%;
 
   .nav-container {
     display: flex;
@@ -9,16 +10,116 @@
     gap: 10px;
     width: 12%;
     align-items: center;
+    padding-right: 20px;
   }
 
   .child-container {
-    padding: 30px 0;
+    padding: 10px;
+    width: 88%;
+    box-sizing: border-box;
   }
 }
 
 .basic-info-form {
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   align-items: center;
+}
+
+.annotations-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  height: 100%;
+
+  .image-container {
+    max-width: 100%;
+    max-height: calc(100% - 80px); // leave some space for the buttons
+    user-select: none;
+    position: relative;
+
+    img {
+      object-fit: contain;
+    }
+
+    .annotation-circle {
+      position: absolute;
+      border-radius: 100%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 3px 3px 5px 2px #000000a0;
+      cursor: pointer;
+      translate: -50% -50%;
+    }
+
+    .annotation-open {
+      position: absolute;
+      translate: -25px -45px;
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      width: 25rem;
+      box-shadow: 3px 3px 5px 2px #000000aa;
+      z-index: 99; // on top of all circle annotations
+
+      .annotation-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+
+        .icon-button {
+          cursor: pointer;
+          stroke-width: 1px;
+        }
+        .icon-button.disabled {
+          cursor: default;
+          opacity: 0.5;
+        }
+        h3 {
+          margin: 3px;
+          cursor: pointer;
+        }
+        .delete-icon {
+          cursor: pointer;
+          background-color: var(--error);
+          border-radius: 100%;
+          width: 30px;
+          height: 30px;
+          color: white;
+          margin-top: auto; // stick to bottom
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+
+      .annotation-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+        background-color: #ffffff60;
+        border-radius: 8px;
+        flex-grow: 1;
+      }
+    }
+  }
+
+  .form-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 20px;
+    justify-content: space-between;
+  }
 }

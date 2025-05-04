@@ -19,7 +19,7 @@ import { getBearerToken, setBearerToken } from "@/utils/localStorage";
 import AccountSettingsPage from "./AccountSettingsPage";
 import EditPaintingPage from "./EditPaintingPages/EditPaintingPage";
 import EditBasicInfoPage from "./EditPaintingPages/EditBasicInfoPage";
-import EditAnnotationsPage from "./EditPaintingPages/EditAnnotationsPage";
+import EditAnnotationsPage from "./EditPaintingPages/EditAnnotationsPage/EditAnnotationsPage";
 import EditCuratorHeatmapPage from "./EditPaintingPages/EditCuratorHeatmapPage";
 import EditPostviewImagePage from "./EditPaintingPages/EditPostviewImagePage";
 
