@@ -1,0 +1,33 @@
+.text-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .labels-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 100%;
+
+    .label {
+      font-size: 14px;
+    }
+
+    .error {
+      color: var(--error);
+      font-size: 14px;
+    }
+  }
+
+  .field {
+    width: 500px;
+    box-sizing: border-box;
+  }
+
+  .field.error {
+    border: 1px solid var(--error);
+    box-shadow: 0 0 8px var(--error);
+    color: var(--error);
+  }
+}
