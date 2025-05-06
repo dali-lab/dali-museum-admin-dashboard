@@ -1,6 +1,6 @@
-# CRUD Template - Web Frontend - React Query / Zustand
+# Dali Museum Admin Dashboard
 
-This repository is an optional frontend starter for new DALI React projects. Installation and setup instructions are included below. You should eventually customize this README file with project-specific documentation.
+[deployment link](https://dali-museum-admin-dashboard.brunchlabs.com/dashboard)
 
 ## Designs
 
@@ -11,7 +11,9 @@ This repository is an optional frontend starter for new DALI React projects. Ins
 [2-4 screenshots from the app]
 
 ## Architecture
+
 ### Tech Stack
+
 - [React v18](https://reactjs.org/)
 - [React Query](https://tanstack.com/query/v4/docs/framework/react/overview)
 - [zustand](https://github.com/pmndrs/zustand)
@@ -21,20 +23,23 @@ This repository is an optional frontend starter for new DALI React projects. Ins
 - [Vite](https://vitejs.dev/)
 
 #### External Packages
+
 - [Description of any notable added services]
 
 ### Style
+
 [Describe notable code style conventions]
 
 We are using [typically a configuration like [CS52's React-Native ESLint Configuration](https://gist.github.com/timofei7/c8df5cc69f44127afb48f5d1dffb6c84) or [CS52's ES6 and Node ESLint Configuration](https://gist.github.com/timofei7/21ac43d41e506429495c7368f0b40cc7)]
 
 ### File Structure
+
     .
-    ├── ...    
+    ├── ...
     ├── public
-    ├── src          
-    │   └── api                # React Query server state cache  
-    │   └── assets             # static assets   
+    ├── src
+    │   └── api                # React Query server state cache
+    │   └── assets             # static assets
     │   └── components         # reusable components across several screens
     │   └── screens            # individual pages
     │   └── store              # Zustand client state
@@ -75,6 +80,7 @@ Your app is ready to be deployed!
 ESLint is set up in this project. To keep code clean, always remember to run `npm run lint` and fix any lint problems before merging into master.
 
 ## Deployment
+
 [Where is the app deployed? i.e. Expo, Surge, TestFlight etc.]
 
 [What are the steps to re-deploy the project with any new changes?]
@@ -82,16 +88,19 @@ ESLint is set up in this project. To keep code clean, always remember to run `np
 [How does one get access to the deployed project?]
 
 ## Authors
-* Firstname Lastname 'YY, role
+
+- Firstname Lastname 'YY, role
 
 ## Acknowledgments
+
 We would like to thank [anyone you would like to acknowledge] for [what you would like to acknowledge them for].
 
 ---
+
 Designed and developed by [@DALI Lab](https://github.com/dali-lab)
 
 ### Template
 
 - Eric Lu '25
 
-Additional credit goes to Adam McQuilkin '22,  Thomas Monfre '21, Tyler Vergho '23 for developing the original DALI [CRUD Template Frontend](https://github.com/dali-lab/crud-template-frontend), which this starter pack was evolved from.
+Additional credit goes to Adam McQuilkin '22, Thomas Monfre '21, Tyler Vergho '23 for developing the original DALI [CRUD Template Frontend](https://github.com/dali-lab/crud-template-frontend), which this starter pack was evolved from.
