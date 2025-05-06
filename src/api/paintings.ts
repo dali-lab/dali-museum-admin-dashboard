@@ -50,15 +50,20 @@ export const createPainting = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (req: { url: string }): Promise<IPainting> => {
+    mutationFn: async (req: { image: any }): Promise<IPainting> => {
+      const formData = new FormData();
+      formData.append("image", req.image);
+
       return axios
-        .post<IPainting>(`${SERVER_URL}paintings/`, req)
+        .post<IPainting>(`${SERVER_URL}paintings/`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
         .then((response) => {
           return response.data;
         })
         .catch((error) => {
           console.error("Error when creating painting", error);
-          throw error;
+          throw Error(error.response?.data?.errors.join("; ") ?? error);
         });
     },
     onSuccess: (payload: IPainting) => {

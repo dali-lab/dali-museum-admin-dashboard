@@ -17,20 +17,30 @@ function PaintingsPage() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  // TODO
-  const handleUploadPaintingSubmit = useCallback(() => {
-    const file = ""; // TODO ?
-    // make create painting request to backend
-    // this will upload it to s3
-    // const newId = mutateCreatePainting({
-    //   file,
-    // });
+  const handleUploadPaintingSubmit = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (!event.target.files || event.target.files.length !== 1) {
+        alert("Please select a single file.");
+        return;
+      }
 
-    const newId = "new_painting_id"; // for testing
-
-    // navigate to painting editing pages
-    navigate(newId);
-  }, [navigate]);
+      // make create painting request to backend
+      // backend will upload it to s3
+      mutateCreatePainting(
+        { image: event.target.files[0] },
+        {
+          onSuccess: (newPainting) => {
+            // navigate to painting editing pages
+            navigate(newPainting.id);
+          },
+          onError: (error) => {
+            alert(`Failed to upload painting: ${error.message}`);
+          },
+        }
+      );
+    },
+    [mutateCreatePainting, navigate]
+  );
 
   // handle toggle for exhibition/research modes
   const handleModeToggle = useCallback(
@@ -51,8 +61,8 @@ function PaintingsPage() {
     () =>
       paintings
         ? [...paintings].sort((a, b) => {
-            if (a.alias < b.alias) return -1;
-            if (a.alias > b.alias) return 1;
+            if (a.alias.toLowerCase() < b.alias.toLowerCase()) return -1;
+            if (a.alias.toLowerCase() > b.alias.toLowerCase()) return 1;
             return 0;
           })
         : [],
@@ -87,12 +97,15 @@ function PaintingsPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          <button
-            className="primary"
-            onClick={() => handleUploadPaintingSubmit()}
-          >
-            Add New
-          </button>
+          <label htmlFor="upload-painting" className="button primary">
+            Upload painting
+          </label>
+          <input
+            type="file"
+            onChange={handleUploadPaintingSubmit}
+            id="upload-painting"
+            style={{ display: "none" }}
+          />
         </div>
 
         <div className="paintings-table-scrollable-container">

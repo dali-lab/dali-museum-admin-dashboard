@@ -1,4 +1,4 @@
-import { Navigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./styles.scss";
 import { getPainting, updatePainting } from "@/api/paintings";
 import { ROUTES } from "@/utils/constants";
@@ -8,12 +8,15 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { pick } from "lodash";
 
 const EditBasicInfoPage: React.FC = () => {
+  const navigate = useNavigate();
   const { paintingId } = useParams();
-  if (!paintingId) {
-    return <Navigate to={ROUTES.PAINTINGS} />;
-  }
+  useEffect(() => {
+    if (!paintingId) {
+      navigate(ROUTES.PAINTINGS);
+    }
+  }, [navigate, paintingId]);
 
-  const { data: painting, isLoading } = getPainting(paintingId);
+  const { data: painting, isLoading } = getPainting(paintingId ?? "");
   const initialForm = useMemo(
     () => pick(painting, ["name", "alias", "description", "year"]),
     [painting]
@@ -51,34 +54,37 @@ const EditBasicInfoPage: React.FC = () => {
   }, [form, mutateUpdatePainting, paintingId]);
 
   return (
-    <div className="basic-info-form">
-      <TextInput
-        label="Full Title (displayed in the experience)"
-        type="textarea"
-        rows={2}
-        value={form.name}
-        onChange={(value) => updateForm({ name: value })}
-      />
-      <TextInput
-        label="Alias (displayed in the admin dashboard)"
-        value={form.alias}
-        onChange={(value) => updateForm({ alias: value })}
-      />
-      <TextInput
-        label="Description"
-        type="textarea"
-        value={form.description}
-        onChange={(value) => updateForm({ description: value })}
-      />
-      <TextInput
-        label="Year"
-        type="number"
-        value={form.year}
-        onChange={(value) => updateForm({ year: value })}
-      />
-      <button className="primary" onClick={handleSave}>
-        Save
-      </button>
+    <div className="basic-info-page">
+      <img src={painting?.url} />
+      <div className="basic-info-form">
+        <TextInput
+          label="Full Title (displayed in the experience)"
+          type="textarea"
+          rows={2}
+          value={form.name}
+          onChange={(value) => updateForm({ name: value })}
+        />
+        <TextInput
+          label="Alias (displayed in the admin dashboard)"
+          value={form.alias}
+          onChange={(value) => updateForm({ alias: value })}
+        />
+        <TextInput
+          label="Description"
+          type="textarea"
+          value={form.description}
+          onChange={(value) => updateForm({ description: value })}
+        />
+        <TextInput
+          label="Year"
+          type="number"
+          value={form.year}
+          onChange={(value) => updateForm({ year: value })}
+        />
+        <button className="primary" onClick={handleSave}>
+          Save
+        </button>
+      </div>
     </div>
   );
 };
