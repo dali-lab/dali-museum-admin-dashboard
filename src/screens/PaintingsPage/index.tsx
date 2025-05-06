@@ -47,13 +47,25 @@ function PaintingsPage() {
     [mutateUpdatePainting]
   );
 
-  const searchedPaintings = useMemo(() => {
+  const sortedPaintings = useMemo(
+    () =>
+      paintings
+        ? [...paintings].sort((a, b) => {
+            if (a.alias < b.alias) return -1;
+            if (a.alias > b.alias) return 1;
+            return 0;
+          })
+        : [],
+    [paintings]
+  );
+  // i put these two ^ v in separate useMemos so it doesn't re-sort every time you search
+  const sortedAndFilteredPaintings = useMemo(() => {
     // return only paintings that match the search term
-    if (!searchTerm) return paintings;
-    return paintings?.filter((painting) =>
+    if (!searchTerm) return sortedPaintings;
+    return sortedPaintings?.filter((painting) =>
       painting.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [paintings, searchTerm]);
+  }, [sortedPaintings, searchTerm]);
 
   return (
     <>
@@ -103,7 +115,7 @@ function PaintingsPage() {
                   </td>
                 </tr>
               ) : (
-                searchedPaintings?.map((painting) => (
+                sortedAndFilteredPaintings?.map((painting) => (
                   <tr key={painting.id}>
                     <td>
                       <img
