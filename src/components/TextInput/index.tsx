@@ -1,21 +1,28 @@
 import { useMemo } from "react";
 import "./styles.scss";
+import { isNumber, parseNumber } from "@/utils";
 
-interface TextInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
+interface TextInputProps<T> {
+  type?: "text" | "textarea" | "password" | "number";
+  value: T;
   label: string;
-  onChange: (value: string) => void;
+  onChange?: (value: T) => void;
   error?: string;
+  onBlur?: () => void; // for setting errors
+  rows?: number; // for textarea
+  resize?: "none" | "vertical" | "horizontal" | "both"; // for textarea
 }
 
-const TextInput: React.FC<TextInputProps> = ({
+function TextInput<T>({
   type,
   label,
   value,
   onChange,
   error,
-  ...props
-}) => {
+  rows,
+  resize,
+  ...otherProps
+}: TextInputProps<T>) {
   // unique id for this text input
   const id = useMemo(
     () => "text-input-" + label.toLowerCase().replace(/\s+/g, "-"),
@@ -23,6 +30,25 @@ const TextInput: React.FC<TextInputProps> = ({
   );
 
   const isError = useMemo(() => error && error !== "", [error]);
+
+  const props = {
+    id,
+    type: type === "number" ? "text" : (type ?? "text"),
+    className: "field" + (isError ? " error" : ""),
+    value: value?.toString() ?? "",
+    onChange: (e: any) => {
+      if (!onChange) return;
+      const newval = e?.target?.value ?? "";
+
+      if (type === "number") {
+        // if number type, only onchange if value is a valid number.
+        if (isNumber(newval)) onChange(parseNumber(newval) as T);
+      } else onChange(newval);
+    },
+    rows: rows ?? 4,
+    style: { resize: resize ?? "vertical" },
+    ...otherProps,
+  };
 
   return (
     <div className="text-input">
@@ -32,16 +58,9 @@ const TextInput: React.FC<TextInputProps> = ({
         </label>
         {isError && <span className="error">{error}</span>}
       </div>
-      <input
-        type={type ?? "text"}
-        id={id}
-        className={"field" + (isError ? " error" : "")}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        {...props}
-      />
+      {type === "textarea" ? <textarea {...props} /> : <input {...props} />}
     </div>
   );
-};
+}
 
 export default TextInput;

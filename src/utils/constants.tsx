@@ -12,11 +12,19 @@ export const ROUTES = {
   ADMIN_LOGIN: "/administrator-login",
 
   DASHBOARD: "/dashboard",
-  PAINTINGS: "/paintings",
-  // HEATMAPS: "/heatmaps",
-
   SETTINGS: "/settings",
   ADMIN_REQUESTS: "/admin-requests",
+
+  PAINTINGS: "/paintings",
+  // these vvvv are all subroutes of /paintings/:id/
+  EDIT_BASIC_INFO: "basic-info",
+  EDIT_ANNOTATIONS: "annotations",
+  EDIT_CURATOR_HEATMAP: "curator-heatmap",
+  EDIT_POSTVIEW_IMAGE: "postview-image",
+
+  // HEATMAPS: "/heatmaps",
+
+  NOT_FOUND: "/not-found",
 };
 
 export const FEATURES = {

@@ -3,6 +3,9 @@
   flex-direction: column;
   gap: 8px;
 
+  width: 100%;
+  max-width: 500px;
+
   .labels-container {
     display: flex;
     flex-direction: row;
@@ -21,8 +24,8 @@
   }
 
   .field {
-    width: 500px;
     box-sizing: border-box;
+    width: 100%;
   }
 
   .field.error {

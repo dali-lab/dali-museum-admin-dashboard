@@ -1,0 +1,16 @@
+.tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+
+  .tab {
+    background-color: var(--secondary);
+    border-radius: 0 5px 5px 0;
+    padding: 10px 20px;
+    color: black;
+  }
+  .tab.selected {
+    background-color: var(--primary);
+  }
+}

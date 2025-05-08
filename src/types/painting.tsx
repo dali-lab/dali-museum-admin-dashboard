@@ -21,7 +21,7 @@ export interface IPainting {
   url: string;
 
   annotations: IAnnotation[];
-  curatorHeatmap: IPoint[];
+  curatorHeatmapPoints: IPoint[];
   activePostviewImage: string; // id
 
   annotationColor: string;
