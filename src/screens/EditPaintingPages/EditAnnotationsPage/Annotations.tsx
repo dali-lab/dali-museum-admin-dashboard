@@ -72,6 +72,7 @@ export const OpenAnnotation: React.FC<OpenAnnotationProps> = ({
         backgroundColor: color,
         color: contrastingColor(color),
       }}
+      onClick={(e) => e.stopPropagation()}
     >
       <div className="annotation-header">
         <BsChevronUp
