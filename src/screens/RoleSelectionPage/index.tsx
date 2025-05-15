@@ -14,12 +14,12 @@ const RoleSelectionPage: React.FC = () => {
 
   const handleResearchClick = () => {
     // For now, both buttons lead to the same sign up form
-    navigate(ROUTES.SIGNUP);
+    navigate(ROUTES.SIGNUP_RESEARCHER);
   };
 
   const handleAdministrationClick = () => {
     // For now, both buttons lead to the same sign up form
-    navigate(ROUTES.SIGNUP);
+    navigate(ROUTES.SIGNUP_ADMIN);
   };
 
   return (
@@ -29,16 +29,13 @@ const RoleSelectionPage: React.FC = () => {
       </button>
 
       <h1 className="role-selection-title">Sign Up</h1>
-      
+
       <h2 className="role-selection-subtitle">
         What Is Your Purpose For Accessing "How Do I Look"?
       </h2>
-      
+
       <div className="tiles-container">
-        <button 
-          className="role-tile" 
-          onClick={handleResearchClick}
-        >
+        <button className="role-tile" onClick={handleResearchClick}>
           <div className="icon-circle">
             <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
               <circle cx="12" cy="8" r="4" />
@@ -47,11 +44,8 @@ const RoleSelectionPage: React.FC = () => {
           </div>
           <h2>Research</h2>
         </button>
-        
-        <button 
-          className="role-tile"
-          onClick={handleAdministrationClick}
-        >
+
+        <button className="role-tile" onClick={handleAdministrationClick}>
           <div className="icon-circle">
             <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
               <circle cx="12" cy="8" r="4" />
@@ -61,14 +55,15 @@ const RoleSelectionPage: React.FC = () => {
           <h2>Administration</h2>
         </button>
       </div>
-      
+
       <div className="footer">
         <div className="logo-container">
           <img src={daliLogo} alt="DALI Lab" className="dali-logo" />
         </div>
-        
+
         <div className="help-text">
-          how do i<br />look?
+          how do i<br />
+          look?
         </div>
       </div>
     </div>

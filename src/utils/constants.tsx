@@ -1,11 +1,15 @@
 export const SERVER_URL = import.meta.env.VITE_REACT_APP_BASE_API_URL;
 
 export const ROUTES = {
-  SIGNIN: "/signin",
-  ROLE_SELECTION: "/role-selection",
+  NONE: "/404",
+
+  ROLE_SELECTION: "/roles",
+  LOGIN: "/login",
+  LOGIN_RESEARCHER: "/login-researcher",
+  LOGIN_ADMIN: "/login-admin",
   SIGNUP: "/signup",
-  RESEARCHER_LOGIN: "/researcher-login",
-  ADMIN_LOGIN: "/admin-login",
+  SIGNUP_RESEARCHER: "/signup-researcher",
+  SIGNUP_ADMIN: "/signup-ADMIN",
   VERIFY: "/verify",
   DASHBOARD: "/dashboard",
 

@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { SERVER_URL } from "@/utils/constants";
+import { ROUTES, SERVER_URL } from "@/utils/constants";
 import axios from "axios";
 import { UserScopes, IUser } from "@/types/users";
+import { useNavigate } from "react-router-dom";
 
 const GET_USER_KEY = "users/individual";
 
@@ -99,6 +100,73 @@ export const deleteUser = () => {
     },
     onSuccess: () => {
       queryClient.setQueryData([GET_USER_KEY], USER_INITIAL_DATA);
+    },
+  });
+};
+
+const GET_PENDING_USERS = "users/pending";
+
+export type PartialUser = {
+  id: string;
+  name: string;
+  email: string;
+  date: Date;
+};
+
+export const getPendingUsers = () => {
+  const nav = useNavigate();
+
+  return useQuery({
+    queryKey: [GET_PENDING_USERS],
+    queryFn: async (): Promise<PartialUser[]> => {
+      return axios
+        .get<PartialUser[]>(`${SERVER_URL}auth/pending`)
+        .then((response) => {
+          return response.data as PartialUser[];
+        })
+        .catch((error) => {
+          console.error("Error when getting pending users", error);
+          nav(ROUTES.DASHBOARD);
+          throw error;
+        });
+    },
+  });
+};
+
+const GET_ADMINS = "users/admins";
+
+export const getApprovedUsers = () => {
+  const nav = useNavigate();
+
+  return useQuery({
+    queryKey: [GET_ADMINS],
+    queryFn: async (): Promise<PartialUser[]> => {
+      return axios
+        .get<PartialUser[]>(`${SERVER_URL}auth/admins`)
+        .then((response) => {
+          return response.data as PartialUser[];
+        })
+        .catch((error) => {
+          console.error("Error when getting pending users", error);
+          nav(ROUTES.DASHBOARD);
+          throw error;
+        });
+    },
+  });
+};
+
+export const approveUser = () => {
+  const nav = useNavigate();
+
+  return useMutation({
+    mutationFn: async (req: { email: string }) => {
+      return axios.post(`${SERVER_URL}auth/pending`, req).catch((error) => {
+        alert("Error when getting pending admins" + error);
+        throw error;
+      });
+    },
+    onError: () => {
+      nav(ROUTES.DASHBOARD);
     },
   });
 };

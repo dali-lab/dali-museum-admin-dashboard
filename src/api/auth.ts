@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/indent */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { SERVER_URL } from "@/utils/constants";
+import { ROUTES, SERVER_URL } from "@/utils/constants";
 import axios from "axios";
 import { UserScopes } from "@/types/users";
 import { getBearerToken, setBearerToken } from "@/utils/localStorage";
+import { useNavigate } from "react-router-dom";
 
 interface LoginResponse {
   token: string;
   user: {
-    id: string;
+    // id: string;
     email: string;
     // no password
     name: string;
@@ -40,6 +41,7 @@ export const getAuthUser = () => {
 
 export const logout = () => {
   const queryClient = useQueryClient();
+  const nav = useNavigate();
 
   return useMutation({
     mutationFn: async () => {
@@ -48,21 +50,32 @@ export const logout = () => {
     },
     onSuccess: () => {
       queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], USER_INITIAL_DATA);
+      nav("/");
     },
   });
 };
 
 export const signUp = () => {
+  const queryClient = useQueryClient();
+  const nav = useNavigate();
+
   return useMutation({
     mutationFn: async (credentials: {
       email: string;
       password: string;
       name: string;
+      is_admin: boolean;
+      is_researcher: boolean;
     }) => {
       return axios.post(`${SERVER_URL}auth/signup`, credentials);
     },
-    onSuccess: () => {
+    onSuccess: (payload) => {
       alert("Sign up successful!");
+      queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], {
+        ...payload.user,
+        authenticated: true,
+      });
+      nav(ROUTES.DASHBOARD);
     },
     onError: (error) => {
       alert("Error when signing up: " + error);
@@ -72,11 +85,12 @@ export const signUp = () => {
 
 export const signIn = () => {
   const queryClient = useQueryClient();
+  const nav = useNavigate();
 
   return useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
       return axios
-        .post<LoginResponse>(`${SERVER_URL}auth/signin`, credentials)
+        .post<LoginResponse>(`${SERVER_URL}auth/login`, credentials)
         .then((response) => {
           if (response.status == 403) {
             // forbidden - not verified
@@ -102,6 +116,7 @@ export const signIn = () => {
         ...payload.user,
         authenticated: true,
       });
+      nav(ROUTES.DASHBOARD);
     },
   });
 };
@@ -111,7 +126,7 @@ export const jwtSignIn = () => {
 
   return useMutation({
     mutationFn: async () => {
-      const token = await getBearerToken();
+      const token = getBearerToken();
       if (!token) {
         throw Error("null token");
       }
