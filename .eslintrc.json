@@ -21,8 +21,8 @@
     "no-underscore-dangle": "off",
     "max-len": ["error", { "code": 200 }],
     "indent": ["error", 2, { "SwitchCase": 1 }],
-    "quotes": ["error", "double"],
-    "@typescript-eslint/quotes": ["error", "double"],
+    "quotes": "off",
+    "@typescript-eslint/quotes": "off",
 
     "import/extensions": "off",
     "import/prefer-default-export": "off",
