@@ -3,9 +3,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../LoginPage.css";
 import daliLogo from "../../../assets/dali_light.png";
+import { signIn } from '@/api/auth';
 
 const ResearcherLoginPage: React.FC = () => {
   const navigate = useNavigate();
+
+  const { mutate: mutateSignIn } = signIn();
   
   // State for form fields with empty initial values
   const [formData, setFormData] = useState({
@@ -28,6 +31,11 @@ const ResearcherLoginPage: React.FC = () => {
 
   const handleConfirmClick = () => {
     console.log("Researcher login attempt with:", formData);
+    if (!formData.userId) alert('Please enter your userId!');
+    else if (!formData.password) alert('Please enter your password!');
+    else {
+      mutateSignIn({ email: formData.userId, password: formData.password });
+    }
     // Add authentication logic later
   };
 
