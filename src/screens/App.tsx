@@ -18,7 +18,6 @@ import AdminRequests from "@/screens/AdminRequests"; // Import the AdminRequests
 import { getConnection } from "@/api/connection";
 import { getAuthUser, jwtSignIn, logout, setCredentials } from "@/api/auth";
 import { getBearerToken } from "@/utils/localStorage";
-// import LoginPage from "./LoginPages/LoginPage";
 import RoleLoginPage from "./LoginPages/RoleLoginPage";
 
 interface ProtectedRouteProps {
@@ -60,8 +59,6 @@ function App() {
       <Routes>
         <Route path="/" element={<WelcomeScreen />} />
         <Route path={ROUTES.ROLE_SELECTION} element={<RoleSelectionPage />} />
-        {/* TODO: idk what ROUTES.LOGIN page is supposed to be but it doesn't exist*/}
-        {/* <Route path={ROUTES.LOGIN} element={<LoginPage />} /> */} 
         <Route
           path={ROUTES.LOGIN_RESEARCHER}
           element={<RoleLoginPage role="researcher" />}
