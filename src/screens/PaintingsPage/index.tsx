@@ -5,8 +5,12 @@ import { getPaintings, createPainting, updatePainting } from "@/api/paintings";
 import { paintingFeatures } from "@/utils";
 import Tag from "@/components/Tag";
 import "./styles.scss";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/utils/constants";
 
 function PaintingsPage() {
+  const navigate = useNavigate();
+
   const { data: paintings, isLoading } = getPaintings();
 
   const { mutate: mutateCreatePainting } = createPainting();
@@ -24,7 +28,11 @@ function PaintingsPage() {
       url,
     });
 
+    // get id from backend?
+    const id = "new id";
+
     // navigate to painting editing pages
+    navigate(/* ROUTES.EDIT_PAINTING + */ id);
   }, []);
 
   // handle toggle for exhibition/research modes

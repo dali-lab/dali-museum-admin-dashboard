@@ -66,10 +66,7 @@ function HeatmapsPage() {
 
   return (
     <div className="container">
-      <PageHeader
-        title={"Resource Page"}
-        toLink={ROUTES.DASHBOARD}
-      ></PageHeader>
+      <PageHeader title={"Heatmaps"} />
       {isResourcesLoading ? (
         <p>Loading...</p>
       ) : (
