@@ -22,7 +22,10 @@ export const getPaintings = () => {
 };
 
 const GET_PAINTING_KEY = "painting/byId";
-export const getPainting = (id: string) => {
+export const getPainting = (
+  id: string,
+  options?: { retry: boolean | number }
+) => {
   return useQuery({
     queryKey: [GET_PAINTING_KEY, id],
     queryFn: async (): Promise<IPainting | null> => {
@@ -32,10 +35,14 @@ export const getPainting = (id: string) => {
           return response.data;
         })
         .catch((error) => {
-          console.error("Error when getting painting by id", error);
+          console.error(
+            "Error when getting painting by id",
+            error.response.data
+          );
           throw error;
         });
     },
+    retry: options?.retry ?? 3,
   });
 };
 
@@ -43,15 +50,20 @@ export const createPainting = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (req: { url: string }): Promise<IPainting> => {
+    mutationFn: async (req: { image: File }): Promise<IPainting> => {
+      const formData = new FormData();
+      formData.append("image", req.image);
+
       return axios
-        .post<IPainting>(`${SERVER_URL}paintings/`, req)
+        .post<IPainting>(`${SERVER_URL}paintings/`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
         .then((response) => {
           return response.data;
         })
         .catch((error) => {
           console.error("Error when creating painting", error);
-          throw error;
+          throw Error(error.response?.data?.errors.join("; ") ?? error);
         });
     },
     onSuccess: (payload: IPainting) => {

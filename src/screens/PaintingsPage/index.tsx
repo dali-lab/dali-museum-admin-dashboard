@@ -5,8 +5,8 @@ import { getPaintings, createPainting, updatePainting } from "@/api/paintings";
 import { paintingFeatures } from "@/utils";
 import Tag from "@/components/Tag";
 import "./styles.scss";
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@/utils/constants";
+import { Link, useNavigate } from "react-router-dom";
+import UploadFileButton from "@/components/UploadFileButton";
 
 function PaintingsPage() {
   const navigate = useNavigate();
@@ -18,22 +18,25 @@ function PaintingsPage() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  // TODO
-  const handleUploadPaintingSubmit = useCallback(() => {
-    // upload painting to s3...
-    const url = "s3 url";
-
-    // make create painting request to backend
-    mutateCreatePainting({
-      url,
-    });
-
-    // get id from backend?
-    const id = "new id";
-
-    // navigate to painting editing pages
-    navigate(/* ROUTES.EDIT_PAINTING + */ id);
-  }, []);
+  const handleUploadPaintingSubmit = useCallback(
+    async (file: File) => {
+      // make create painting request to backend
+      // backend will upload it to s3
+      mutateCreatePainting(
+        { image: file },
+        {
+          onSuccess: (newPainting) => {
+            // navigate to painting editing pages
+            navigate(newPainting.id);
+          },
+          onError: (error) => {
+            alert(`Failed to upload painting: ${error.message}`);
+          },
+        }
+      );
+    },
+    [mutateCreatePainting, navigate]
+  );
 
   // handle toggle for exhibition/research modes
   const handleModeToggle = useCallback(
@@ -47,20 +50,28 @@ function PaintingsPage() {
         }
       );
     },
-    []
+    [mutateUpdatePainting]
   );
 
-  const handleEditPainting = () => {
-    // navigate to painting editing pages
-  };
-
-  const searchedPaintings = useMemo(() => {
+  const sortedPaintings = useMemo(
+    () =>
+      paintings
+        ? [...paintings].sort((a, b) => {
+            if (a.alias.toLowerCase() < b.alias.toLowerCase()) return -1;
+            if (a.alias.toLowerCase() > b.alias.toLowerCase()) return 1;
+            return 0;
+          })
+        : [],
+    [paintings]
+  );
+  // i put these two ^ v in separate useMemos so it doesn't re-sort every time you search
+  const sortedAndFilteredPaintings = useMemo(() => {
     // return only paintings that match the search term
-    if (!searchTerm) return paintings;
-    return paintings?.filter((painting) =>
+    if (!searchTerm) return sortedPaintings;
+    return sortedPaintings?.filter((painting) =>
       painting.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [paintings, searchTerm]);
+  }, [sortedPaintings, searchTerm]);
 
   return (
     <>
@@ -82,12 +93,12 @@ function PaintingsPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          <button
-            className="primary"
-            onClick={() => handleUploadPaintingSubmit()}
+          <UploadFileButton
+            handleUpload={handleUploadPaintingSubmit}
+            type="primary"
           >
-            Add New
-          </button>
+            Upload Painting
+          </UploadFileButton>
         </div>
 
         <div className="paintings-table-scrollable-container">
@@ -110,7 +121,7 @@ function PaintingsPage() {
                   </td>
                 </tr>
               ) : (
-                searchedPaintings?.map((painting) => (
+                sortedAndFilteredPaintings?.map((painting) => (
                   <tr key={painting.id}>
                     <td>
                       <img
@@ -120,7 +131,7 @@ function PaintingsPage() {
                       />
                     </td>
                     <td style={{ textAlign: "left" }}>
-                      <p>{painting.name}</p>
+                      <p>{painting.alias}</p>
                     </td>
                     <td>
                       <div className="toggle-container">
@@ -162,12 +173,9 @@ function PaintingsPage() {
                       </div>
                     </td>
                     <td>
-                      <button
-                        className="primary"
-                        onClick={() => handleEditPainting()}
-                      >
-                        Edit
-                      </button>
+                      <Link to={painting.id}>
+                        <button className="primary">Edit</button>
+                      </Link>
                     </td>
                   </tr>
                 ))

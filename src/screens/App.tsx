@@ -7,7 +7,7 @@ import ErrorPage from "./ErrorPage";
 import ForbiddenPage from "./ForbiddenPage";
 import SignUpPage from "./SignUpPage";
 import PaintingsPage from "./PaintingsPage";
-import HeatmapsPage from "./HeatmapsPage";
+// import HeatmapsPage from "./HeatmapsPage";
 import WelcomeScreen from "@/screens/WelcomeScreen";
 import RoleSelectionPage from "@/screens/RoleSelectionPage";
 import ResearcherLoginPage from "@/screens/LoginPages/ResearcherLoginPage";
@@ -17,6 +17,11 @@ import { getConnection } from "@/api/connection";
 import { getAuthUser, jwtSignIn, logout, setCredentials } from "@/api/auth";
 import { getBearerToken, setBearerToken } from "@/utils/localStorage";
 import AccountSettingsPage from "./AccountSettingsPage";
+import EditPaintingPage from "./EditPaintingPages/EditPaintingPage";
+import EditBasicInfoPage from "./EditPaintingPages/EditBasicInfoPage";
+import EditAnnotationsPage from "./EditPaintingPages/EditAnnotationsPage/EditAnnotationsPage";
+import EditCuratorHeatmapPage from "./EditPaintingPages/EditCuratorHeatmapPage";
+import EditPostviewImagePage from "./EditPaintingPages/EditPostviewImagePage";
 
 interface ProtectedRouteProps {
   allowableScopes: UserScopes[];
@@ -42,7 +47,7 @@ function App() {
     } else {
       logoutMutate();
     }
-  }, []);
+  }, [logoutMutate]);
 
   const { mutate: mutateJwtSignIn } = jwtSignIn();
 
@@ -50,9 +55,7 @@ function App() {
     if (isConnected) {
       mutateJwtSignIn();
     }
-  }, [isConnected]);
-
-  // if (!isConnected) return <ErrorPage />;
+  }, [isConnected, mutateJwtSignIn]);
 
   return (
     <Router>
@@ -93,6 +96,28 @@ function App() {
             // </ProtectedRoute>
           }
         />
+        {/* TODO protect these vvvv too */}
+        <Route
+          path={ROUTES.PAINTINGS + "/:paintingId"}
+          element={<EditPaintingPage />}
+        >
+          <Route
+            path={ROUTES.EDIT_BASIC_INFO}
+            element={<EditBasicInfoPage />}
+          />
+          <Route
+            path={ROUTES.EDIT_ANNOTATIONS}
+            element={<EditAnnotationsPage />}
+          />
+          <Route
+            path={ROUTES.EDIT_CURATOR_HEATMAP}
+            element={<EditCuratorHeatmapPage />}
+          />
+          <Route
+            path={ROUTES.EDIT_POSTVIEW_IMAGE}
+            element={<EditPostviewImagePage />}
+          />
+        </Route>
         {/* <Route
           path={ROUTES.HEATMAPS}
           element={
@@ -101,6 +126,8 @@ function App() {
             // </ProtectedRoute>
           }
         /> */}
+        <Route path={ROUTES.NOT_FOUND} element={<ErrorPage />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
   );

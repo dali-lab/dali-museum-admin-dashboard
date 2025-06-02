@@ -20,9 +20,11 @@
     "linebreak-style": "off",
     "no-underscore-dangle": "off",
     "max-len": ["error", { "code": 200 }],
-    "indent": ["error", 2, { "SwitchCase": 1 }],
     "quotes": ["error", "double"],
     "@typescript-eslint/quotes": ["error", "double"],
+
+    "indent": "off", // prettier handles indentation
+    "@typescript-eslint/indent": "off",
 
     "import/extensions": "off",
     "import/prefer-default-export": "off",
@@ -36,7 +38,9 @@
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/ban-ts-ignore": "off"
+    "@typescript-eslint/ban-ts-ignore": "off",
+
+    "react-hooks/exhaustive-deps": "warn"
   },
   "settings": {
     "import/resolver": {
@@ -46,5 +50,5 @@
       } // this loads <rootdir>/tsconfig.json to eslint
     }
   },
-  "plugins": ["@typescript-eslint", "import"]
+  "plugins": ["@typescript-eslint", "import", "react-hooks"]
 }
