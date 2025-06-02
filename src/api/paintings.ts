@@ -50,7 +50,7 @@ export const createPainting = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (req: { image: any }): Promise<IPainting> => {
+    mutationFn: async (req: { image: File }): Promise<IPainting> => {
       const formData = new FormData();
       formData.append("image", req.image);
 

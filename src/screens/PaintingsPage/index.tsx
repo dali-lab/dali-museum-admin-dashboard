@@ -6,6 +6,7 @@ import { paintingFeatures } from "@/utils";
 import Tag from "@/components/Tag";
 import "./styles.scss";
 import { Link, useNavigate } from "react-router-dom";
+import UploadFileButton from "@/components/UploadFileButton";
 
 function PaintingsPage() {
   const navigate = useNavigate();
@@ -18,16 +19,11 @@ function PaintingsPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleUploadPaintingSubmit = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (!event.target.files || event.target.files.length !== 1) {
-        alert("Please select a single file.");
-        return;
-      }
-
+    async (file: File) => {
       // make create painting request to backend
       // backend will upload it to s3
       mutateCreatePainting(
-        { image: event.target.files[0] },
+        { image: file },
         {
           onSuccess: (newPainting) => {
             // navigate to painting editing pages
@@ -97,15 +93,12 @@ function PaintingsPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          <label htmlFor="upload-painting" className="button primary">
-            Upload painting
-          </label>
-          <input
-            type="file"
-            onChange={handleUploadPaintingSubmit}
-            id="upload-painting"
-            style={{ display: "none" }}
-          />
+          <UploadFileButton
+            handleUpload={handleUploadPaintingSubmit}
+            type="primary"
+          >
+            Upload Painting
+          </UploadFileButton>
         </div>
 
         <div className="paintings-table-scrollable-container">

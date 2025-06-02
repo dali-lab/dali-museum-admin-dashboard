@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import "./styles.scss";
 import { getPainting, updatePainting } from "@/api/paintings";
 import { ROUTES } from "@/utils/constants";
@@ -16,7 +16,11 @@ const EditBasicInfoPage: React.FC = () => {
     }
   }, [navigate, paintingId]);
 
-  const { data: painting, isLoading } = getPainting(paintingId ?? "");
+  const {
+    data: painting,
+    isLoading,
+    isFetched,
+  } = getPainting(paintingId ?? "");
   const initialForm = useMemo(
     () => pick(painting, ["name", "alias", "description", "year"]),
     [painting]
@@ -52,6 +56,10 @@ const EditBasicInfoPage: React.FC = () => {
       }
     );
   }, [form, mutateUpdatePainting, paintingId]);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isFetched && !painting) return <Navigate to={ROUTES.NOT_FOUND} />;
+  if (!painting) return null;
 
   return (
     <div className="basic-info-page">

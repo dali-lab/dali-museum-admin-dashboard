@@ -7,6 +7,7 @@ import { IAnnotation, IPainting } from "@/types/painting";
 import { AnnotationCircle, OpenAnnotation } from "./Annotations";
 import { pick } from "lodash";
 import TextInput from "@/components/TextInput";
+import { useElementSize } from "@/hooks/useElementSize";
 
 const EditAnnotationsPage: React.FC = () => {
   const { paintingId } = useParams();
@@ -34,32 +35,8 @@ const EditAnnotationsPage: React.FC = () => {
   );
 
   // ---------- image canvas size and position --------------
-  const [imageRect, setImageRect] = useState({
-    width: 0,
-    height: 0,
-    x: 0,
-    y: 0,
-  });
-
-  // when page is resized, set size of image
-  useEffect(() => {
-    const handleResize = () => {
-      const size = document
-        .getElementById("painting-canvas")
-        ?.getBoundingClientRect();
-      setImageRect({
-        width: size?.width ?? 0,
-        height: size?.height ?? 0,
-        x: size?.x ?? 0,
-        y: size?.y ?? 0,
-      });
-    };
-
-    handleResize(); // call once at first
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [setImageRect, painting]);
+  // i need this to set the size of the row of buttons under the painting
+  const imageRect = useElementSize("painting-image", [painting]);
 
   // --------- annotations --------------
   const [annotations, setAnnotations] = useState<IAnnotation[]>(
@@ -237,6 +214,7 @@ const EditAnnotationsPage: React.FC = () => {
     >
       <div className="image-container" id="painting-canvas">
         <img
+          id="painting-image"
           src={painting.url}
           width="100%"
           height="100%"
