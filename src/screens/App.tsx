@@ -5,20 +5,22 @@ import { UserScopes } from "@/types/users";
 import DashboardPage from "./DashboardPage";
 import ErrorPage from "./ErrorPage";
 import ForbiddenPage from "./ForbiddenPage";
-import SignInPage from "./SignInPage";
 import SignUpPage from "./SignUpPage";
+import LoginPage from "./LoginPage";
 import PaintingsPage from "./PaintingsPage";
-import HeatmapsPage from "./HeatmapsPage";
+// import HeatmapsPage from "./HeatmapsPage";
 import WelcomeScreen from "@/screens/WelcomeScreen";
 import RoleSelectionPage from "@/screens/RoleSelectionPage";
-import ResearcherLoginPage from "@/screens/LoginPages/ResearcherLoginPage";
-import AdministratorLoginPage from "@/screens/LoginPages/AdministratorLoginPage";
-import VerifyPage from "./VerifyPage";
 import AdminRequests from "@/screens/AdminRequests"; // Import the AdminRequests component
 import { getConnection } from "@/api/connection";
-import { getAuthUser, jwtSignIn, logout, setCredentials } from "@/api/auth";
+import { getAuthUser, jwtSignIn, setCredentials } from "@/api/auth";
+import AccountSettingsPage from "./AccountSettingsPage";
+import EditPaintingPage from "./EditPaintingPages/EditPaintingPage";
+import EditBasicInfoPage from "./EditPaintingPages/EditBasicInfoPage";
+import EditAnnotationsPage from "./EditPaintingPages/EditAnnotationsPage/EditAnnotationsPage";
+import EditCuratorHeatmapPage from "./EditPaintingPages/EditCuratorHeatmapPage";
+import EditPostviewImagePage from "./EditPaintingPages/EditPostviewImagePage";
 import { getBearerToken } from "@/utils/localStorage";
-import RoleLoginPage from "./LoginPages/RoleLoginPage";
 
 interface ProtectedRouteProps {
   allowableScopes: UserScopes[];
@@ -47,45 +49,34 @@ function App() {
   const { mutate: mutateJwtSignIn } = jwtSignIn();
 
   useEffect(() => {
-  	if (isConnected) {
-  		mutateJwtSignIn();
-  	}
-  }, [isConnected]);
-
-  // if (!isConnected) return <ErrorPage />;
+    if (isConnected) {
+      mutateJwtSignIn();
+    }
+  }, [isConnected, mutateJwtSignIn]);
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<WelcomeScreen />} />
+        <Route path={ROUTES.WELCOME} element={<WelcomeScreen />} />
+        <Route
+          path={ROUTES.RESEARCHER_LOGIN}
+          element={<LoginPage role="researcher" />}
+        />
+        <Route path={ROUTES.ADMIN_LOGIN} element={<LoginPage role="admin" />} />
+
         <Route path={ROUTES.ROLE_SELECTION} element={<RoleSelectionPage />} />
         <Route
-          path={ROUTES.LOGIN_RESEARCHER}
-          element={<RoleLoginPage role="researcher" />}
+          path={ROUTES.RESEARCHER_SIGNUP}
+          element={<SignUpPage role={UserScopes.Researcher} />}
         />
         <Route
-          path={ROUTES.LOGIN_ADMIN}
-          element={<RoleLoginPage role="admin" />}
+          path={ROUTES.ADMIN_SIGNUP}
+          element={<SignUpPage role={UserScopes.Admin} />}
         />
-        {/* <Route path={ROUTES.SIGNUP} element={<SignUpPage role={"researcher"} />} /> */}
-        <Route
-          path={ROUTES.SIGNUP_RESEARCHER}
-          element={<SignUpPage role="researcher" />}
-        />
-        <Route
-          path={ROUTES.SIGNUP_ADMIN}
-          element={<SignUpPage role="admin" />}
-        />
-        {/* Add the AdminRequests route */}
+
         <Route path={ROUTES.ADMIN_REQUESTS} element={<AdminRequests />} />
-        <Route
-          path={ROUTES.VERIFY}
-          element={
-            // <ProtectedRoute allowableScopes={[UserScopes.Unverified]}>
-            <VerifyPage />
-            // </ProtectedRoute>
-          }
-        />
+        <Route path={ROUTES.SETTINGS} element={<AccountSettingsPage />} />
+
         <Route
           path={ROUTES.DASHBOARD}
           element={
@@ -102,14 +93,38 @@ function App() {
             // </ProtectedRoute>
           }
         />
+        {/* TODO protect these vvvv too */}
         <Route
+          path={ROUTES.PAINTINGS + "/:paintingId"}
+          element={<EditPaintingPage />}
+        >
+          <Route
+            path={ROUTES.EDIT_BASIC_INFO}
+            element={<EditBasicInfoPage />}
+          />
+          <Route
+            path={ROUTES.EDIT_ANNOTATIONS}
+            element={<EditAnnotationsPage />}
+          />
+          <Route
+            path={ROUTES.EDIT_CURATOR_HEATMAP}
+            element={<EditCuratorHeatmapPage />}
+          />
+          <Route
+            path={ROUTES.EDIT_POSTVIEW_IMAGE}
+            element={<EditPostviewImagePage />}
+          />
+        </Route>
+        {/* <Route
           path={ROUTES.HEATMAPS}
           element={
             // <ProtectedRoute allowableScopes={[UserScopes.Admin]}>
             <HeatmapsPage />
             // </ProtectedRoute>
           }
-        />
+        /> */}
+        <Route path={ROUTES.NOT_FOUND} element={<ErrorPage />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
   );

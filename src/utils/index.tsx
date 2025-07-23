@@ -22,9 +22,9 @@ export function paintingFeatures(painting: IPainting) {
     features.push(FEATURES.ANNOTATIONS);
   }
   if (
-    painting.curatorHeatmap &&
-    painting.curatorHeatmap.length &&
-    painting.curatorHeatmap.length > 0
+    painting.curatorHeatmapPoints &&
+    painting.curatorHeatmapPoints.length &&
+    painting.curatorHeatmapPoints.length > 0
   ) {
     features.push(FEATURES.CURATOR_HEATMAP);
   }
@@ -34,3 +34,13 @@ export function paintingFeatures(painting: IPainting) {
 
   return features;
 }
+
+/** return true if the value is a number or an empty string */
+export const isNumber = (value: string) => {
+  return /^\d*$/.test(value);
+};
+
+/** return the parsed number, or undefined if the value is an empty string. */
+export const parseNumber = (value: string) => {
+  return /^\d+$/.test(value) ? parseInt(value) : undefined;
+};

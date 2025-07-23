@@ -63,12 +63,13 @@ export const updateUser = () => {
   return useMutation({
     mutationFn: async (req: {
       id: string;
-      email: string;
-      password: string;
-      role: UserScopes;
+      name?: string;
+      email?: string;
+      password?: string;
+      role?: UserScopes;
     }): Promise<IUser> => {
       return axios
-        .patch(`${SERVER_URL}users/${req.id}`, req)
+        .put(`${SERVER_URL}users/${req.id}`, req)
         .then((response) => {
           return response.data;
         })

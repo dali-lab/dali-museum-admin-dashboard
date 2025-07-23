@@ -32,6 +32,7 @@
     "babel-eslint": "^10.1.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-plugin-airbnb-base": "^0.0.1-security",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
@@ -70,6 +71,7 @@
   "devDependencies": {
     "@babel/plugin-transform-private-property-in-object": "^7.25.9",
     "@babel/preset-env": "^7.26.0",
+    "@types/lodash": "^4.17.16",
     "@typescript-eslint/eslint-plugin": "^5.36.2",
     "eslint": "^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -78,7 +80,7 @@
     "eslint-plugin-n": "^15.2.5",
     "eslint-plugin-promise": "^6.0.1",
     "eslint-plugin-react": "^7.31.8",
-    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "sass": "^1.54.5",
     "typescript": "^4.8.3"
   }

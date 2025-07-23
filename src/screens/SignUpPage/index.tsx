@@ -1,13 +1,16 @@
 // src/screens/SignUpPage.tsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "./SignUpPage.css";
 import daliLogo from "../../assets/dali_light.png";
+import { UserScopes } from "@/types/users";
 import { ROUTES } from "@/utils/constants";
+import { Link } from "react-router-dom";
 
-function SignUpPage({ role }: { role: "admin" | "researcher" }) {
-  const navigate = useNavigate();
+interface SignupPageProps {
+  role: UserScopes;
+}
 
+const SignUpPage: React.FC<SignupPageProps> = ({ role }) => {
   // State for form fields with empty initial values
   const [formData, setFormData] = useState({
     id: "",
@@ -15,6 +18,24 @@ function SignUpPage({ role }: { role: "admin" | "researcher" }) {
     password: "",
     confirmPassword: "",
   });
+
+  // const { mutate: mutateCreateUser } = createUser();
+  // const { mutate: mutateUpdateUser } = updateUser();
+  // const { mutate: mutateDeleteUser } = deleteUser();
+
+  // const handleCreateUserSubmit = () => {
+  //   // Send only if all fields filled in
+  //   if (!createEmail) alert("Please enter an email!");
+  //   else if (!createPassword) alert("Please enter a password!");
+  //   else if (!createName) alert("Please enter a name!");
+  //   else {
+  //     mutateCreateUser({
+  //       email: createEmail,
+  //       password: createPassword,
+  //       name: createName,
+  //     });
+  //   }
+  // };
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,10 +46,6 @@ function SignUpPage({ role }: { role: "admin" | "researcher" }) {
     }));
   };
 
-  const handleBackClick = () => {
-    navigate(ROUTES.ROLE_SELECTION); // Go back to role selection
-  };
-
   const handleConfirmClick = () => {
     console.log("Confirm button clicked with data:", formData);
     // Add functionality later
@@ -36,15 +53,17 @@ function SignUpPage({ role }: { role: "admin" | "researcher" }) {
 
   return (
     <div className="signup-container">
-      <button className="back-button" onClick={handleBackClick}>
-        Back
-      </button>
+      <Link to={ROUTES.ROLE_SELECTION}>
+        <button className="back-button">Back</button>
+      </Link>
 
       <h1 className="signup-title">Sign Up</h1>
 
       <div className="signup-form">
         <div className="form-group">
-          <label htmlFor="id">[Museum Or University] ID</label>
+          <label htmlFor="id">
+            {role == UserScopes.Admin ? "Museum" : "University"} ID
+          </label>
           <input
             type="text"
             id="id"
@@ -108,6 +127,6 @@ function SignUpPage({ role }: { role: "admin" | "researcher" }) {
       </div>
     </div>
   );
-}
+};
 
 export default SignUpPage;

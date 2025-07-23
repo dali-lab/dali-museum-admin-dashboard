@@ -1,15 +1,14 @@
 // src/screens/ResearcherLoginPage.tsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "../LoginPage.css";
 import daliLogo from "../../../assets/dali_light.png";
-import { signIn } from '@/api/auth';
+import { signIn } from "@/api/auth";
+import { Link } from "react-router-dom";
+import { ROUTES } from "@/utils/constants";
 
 const ResearcherLoginPage: React.FC = () => {
-  const navigate = useNavigate();
-
   const { mutate: mutateSignIn } = signIn();
-  
+
   // State for form fields with empty initial values
   const [formData, setFormData] = useState({
     userId: "",
@@ -19,20 +18,16 @@ const ResearcherLoginPage: React.FC = () => {
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
       [id]: value,
     }));
   };
 
-  const handleBackClick = () => {
-    navigate("/");
-  };
-
   const handleConfirmClick = () => {
     console.log("Researcher login attempt with:", formData);
-    if (!formData.userId) alert('Please enter your userId!');
-    else if (!formData.password) alert('Please enter your password!');
+    if (!formData.userId) alert("Please enter your userId!");
+    else if (!formData.password) alert("Please enter your password!");
     else {
       mutateSignIn({ email: formData.userId, password: formData.password });
     }
@@ -46,18 +41,18 @@ const ResearcherLoginPage: React.FC = () => {
 
   return (
     <div className="login-container">
-      <button className="back-button" onClick={handleBackClick}>
-        Back
-      </button>
+      <Link to={ROUTES.WELCOME}>
+        <button className="back-button">Back</button>
+      </Link>
 
       <h1 className="login-title">Researcher Log In</h1>
-      
+
       <div className="login-form">
         <div className="form-group">
           <label htmlFor="userId">User ID</label>
-          <input 
-            type="text" 
-            id="userId" 
+          <input
+            type="text"
+            id="userId"
             className="form-input"
             value={formData.userId}
             onChange={handleChange}
@@ -67,9 +62,9 @@ const ResearcherLoginPage: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="password">Password</label>
-          <input 
-            type="password" 
-            id="password" 
+          <input
+            type="password"
+            id="password"
             className="form-input"
             value={formData.password}
             onChange={handleChange}
@@ -77,28 +72,23 @@ const ResearcherLoginPage: React.FC = () => {
           />
         </div>
 
-        <button 
-          className="confirm-button"
-          onClick={handleConfirmClick}
-        >
+        <button className="confirm-button" onClick={handleConfirmClick}>
           Confirm
         </button>
-        
-        <button 
-          className="forgot-details-button"
-          onClick={handleForgotDetails}
-        >
+
+        <button className="forgot-details-button" onClick={handleForgotDetails}>
           Forgot Details?
         </button>
       </div>
-      
+
       <div className="footer">
         <div className="logo-container">
           <img src={daliLogo} alt="DALI Lab" className="dali-logo" />
         </div>
-        
+
         <div className="help-text">
-          how do i<br />look?
+          how do i<br />
+          look?
         </div>
       </div>
     </div>

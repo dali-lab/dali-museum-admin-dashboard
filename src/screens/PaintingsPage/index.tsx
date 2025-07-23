@@ -1,29 +1,42 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import Toggle from "@/components/Toggle";
 import { getPaintings, createPainting, updatePainting } from "@/api/paintings";
 import { paintingFeatures } from "@/utils";
 import Tag from "@/components/Tag";
 import "./styles.scss";
+import { Link, useNavigate } from "react-router-dom";
+import UploadFileButton from "@/components/UploadFileButton";
 
 function PaintingsPage() {
+  const navigate = useNavigate();
+
   const { data: paintings, isLoading } = getPaintings();
 
   const { mutate: mutateCreatePainting } = createPainting();
   const { mutate: mutateUpdatePainting } = updatePainting();
 
-  // TODO
-  const handleUploadPaintingSubmit = useCallback(() => {
-    // upload painting to s3...
-    const url = "s3 url";
+  const [searchTerm, setSearchTerm] = useState("");
 
-    // make create painting request to backend
-    mutateCreatePainting({
-      url,
-    });
-
-    // navigate to painting editing pages
-  }, []);
+  const handleUploadPaintingSubmit = useCallback(
+    async (file: File) => {
+      // make create painting request to backend
+      // backend will upload it to s3
+      mutateCreatePainting(
+        { image: file },
+        {
+          onSuccess: (newPainting) => {
+            // navigate to painting editing pages
+            navigate(newPainting.id);
+          },
+          onError: (error) => {
+            alert(`Failed to upload painting: ${error.message}`);
+          },
+        }
+      );
+    },
+    [mutateCreatePainting, navigate]
+  );
 
   // handle toggle for exhibition/research modes
   const handleModeToggle = useCallback(
@@ -37,12 +50,28 @@ function PaintingsPage() {
         }
       );
     },
-    []
+    [mutateUpdatePainting]
   );
 
-  const handleEditPainting = () => {
-    // navigate to painting editing pages
-  };
+  const sortedPaintings = useMemo(
+    () =>
+      paintings
+        ? [...paintings].sort((a, b) => {
+            if (a.alias.toLowerCase() < b.alias.toLowerCase()) return -1;
+            if (a.alias.toLowerCase() > b.alias.toLowerCase()) return 1;
+            return 0;
+          })
+        : [],
+    [paintings]
+  );
+  // i put these two ^ v in separate useMemos so it doesn't re-sort every time you search
+  const sortedAndFilteredPaintings = useMemo(() => {
+    // return only paintings that match the search term
+    if (!searchTerm) return sortedPaintings;
+    return sortedPaintings?.filter((painting) =>
+      painting.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [sortedPaintings, searchTerm]);
 
   return (
     <>
@@ -50,14 +79,26 @@ function PaintingsPage() {
       <div className="paintings-container">
         <div
           style={{
-            alignSelf: "flex-end",
+            width: "100%",
             display: "flex",
             flexDirection: "row",
+            justifyContent: "space-between",
             gap: "8px",
           }}
         >
-          <input placeholder="search"></input>
-          <button onClick={() => handleUploadPaintingSubmit()}>Add New</button>
+          <input
+            placeholder="search"
+            style={{ width: 400 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          <UploadFileButton
+            handleUpload={handleUploadPaintingSubmit}
+            type="primary"
+          >
+            Upload Painting
+          </UploadFileButton>
         </div>
 
         <div className="paintings-table-scrollable-container">
@@ -80,7 +121,7 @@ function PaintingsPage() {
                   </td>
                 </tr>
               ) : (
-                paintings?.map((painting) => (
+                sortedAndFilteredPaintings?.map((painting) => (
                   <tr key={painting.id}>
                     <td>
                       <img
@@ -90,7 +131,7 @@ function PaintingsPage() {
                       />
                     </td>
                     <td style={{ textAlign: "left" }}>
-                      <p>{painting.name}</p>
+                      <p>{painting.alias}</p>
                     </td>
                     <td>
                       <div className="toggle-container">
@@ -132,7 +173,9 @@ function PaintingsPage() {
                       </div>
                     </td>
                     <td>
-                      <button onClick={() => handleEditPainting()}>Edit</button>
+                      <Link to={painting.id}>
+                        <button className="primary">Edit</button>
+                      </Link>
                     </td>
                   </tr>
                 ))

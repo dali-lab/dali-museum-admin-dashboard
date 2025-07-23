@@ -3,12 +3,14 @@
   flex-direction: row;
   align-items: center;
   height: 3rem;
+  gap: 20px;
 
-  padding: 20px 20px;
+  padding: 20px;
+  padding-left: 40px;
 
   .header-icon {
     cursor: pointer;
-    margin-left: 20px;
+    color: white;
   }
 
   .title {
