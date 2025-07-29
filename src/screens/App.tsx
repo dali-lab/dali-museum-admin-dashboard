@@ -32,12 +32,16 @@ const ProtectedRoute = ({ allowableScopes, children }: ProtectedRouteProps) => {
   const { data, isFetched } = getAuthUser();
   if (!isFetched) return null;
 
-  const { authenticated, role } = data;
+  const { authenticated, isVerified, role } = data;
   if (!authenticated) {
     return <ForbiddenPage />;
   }
-  if (!allowableScopes.includes(role)) {
+  if (!isVerified) {
     return <UnverifiedPage />;
+  }
+  if (!allowableScopes.includes(role)) {
+    // TODO make a custom page for this
+    return <ForbiddenPage />;
   }
 
   return <>{children}</>;
