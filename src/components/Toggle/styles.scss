@@ -7,10 +7,11 @@
   align-items: center;
 
   .toggle-button {
-    color: #9eeaf9;
+    color: var(--primary);
+    cursor: pointer;
   }
 
   .toggle-button.disabled {
-    color: #b72a2a;
+    color: var(--error);
   }
 }

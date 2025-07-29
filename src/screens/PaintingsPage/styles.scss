@@ -5,11 +5,10 @@
   gap: 20px;
   padding: 0px 5%;
 
-  // TODO the header might not be 88px on all computers.....
-  height: calc(100% - 88px);
+  height: calc(100% - 3rem - 40px - 20px); // 100% - header - gap
+  margin-top: 20px;
 
   .paintings-table-scrollable-container {
-    margin-top: 20px;
     width: 100%;
     overflow: scroll;
     padding: 0;

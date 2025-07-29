@@ -1,0 +1,79 @@
+.admin-page {
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  .admin-container {
+    width: 66%;
+    min-width: fit-content;
+    margin: 0 auto;
+    padding: 30px 60px;
+    box-sizing: border-box;
+
+    border-radius: 4px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  table {
+    min-width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+
+    table-layout: fixed;
+  }
+
+  th {
+    padding: 10px;
+    border-bottom: 1px solid #666;
+    color: #ccc;
+    font-size: 14px;
+  }
+
+  td {
+    padding: 10px;
+    border-bottom: 1px solid #666;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 5px;
+  }
+
+  .status {
+    color: var(--primary);
+  }
+
+  .approved {
+    color: #8bc34a;
+  }
+
+  .admin-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .modal-title {
+      font-size: 18px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .modal-text {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: space-around;
+      gap: 20px;
+    }
+  }
+}

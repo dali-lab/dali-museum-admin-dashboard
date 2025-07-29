@@ -2,19 +2,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ROUTES, SERVER_URL } from "@/utils/constants";
 import axios from "axios";
-import { UserScopes } from "@/types/users";
+import { IUser, UserScopes } from "@/types/users";
 import { getBearerToken, setBearerToken } from "@/utils/localStorage";
 import { useNavigate } from "react-router-dom";
 
 interface LoginResponse {
   token: string;
-  user: {
-    // id: string;
-    email: string;
-    // no password
-    name: string;
-    role: UserScopes;
-  };
+  user: IUser;
 }
 
 const GET_AUTH_USER_DATA_KEY = "auth/user";
@@ -50,7 +44,7 @@ export const logout = () => {
     },
     onSuccess: () => {
       queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], USER_INITIAL_DATA);
-      nav("/");
+      nav(ROUTES.WELCOME);
     },
   });
 };
@@ -64,13 +58,14 @@ export const signUp = () => {
       email: string;
       password: string;
       name: string;
-      is_admin: boolean;
-      is_researcher: boolean;
+      role: UserScopes;
     }) => {
-      return axios.post(`${SERVER_URL}auth/signup`, credentials);
+      return axios.post<IUser, LoginResponse>(
+        `${SERVER_URL}auth/signup`,
+        credentials
+      );
     },
     onSuccess: (payload) => {
-      alert("Sign up successful!");
       queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], {
         ...payload.user,
         authenticated: true,
@@ -100,13 +95,11 @@ export const signIn = () => {
             };
           }
           setCredentials(response.data.token); // TODO: Check async
-          alert("Signed In!");
           return { ...response.data };
         })
         .catch((error) => {
-          alert(
-            "Unable to log in, please ensure your email and password are correct."
-          );
+          // TODO better error messages
+          alert("Incorrect credentials.");
           console.error("Error when logging in", error);
           throw error;
         });
@@ -145,7 +138,7 @@ export const jwtSignIn = () => {
         })
         .catch((err) => {
           console.error(err);
-          alert("Your login session has expired.");
+          alert("Your login session has expired. Please log in again");
           throw err;
         });
     },
@@ -153,6 +146,12 @@ export const jwtSignIn = () => {
       queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], {
         ...payload.user,
         authenticated: true,
+      });
+    },
+    onError: (error) => {
+      queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], {
+        ...USER_INITIAL_DATA,
+        authenticated: false,
       });
     },
   });
@@ -170,29 +169,4 @@ export const resendCode = async (req: { id: string; email: string }) => {
     .catch((error) => {
       console.error("Error when sending code", error);
     });
-};
-
-export const verify = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (req: { id: string; email: string; code: string }) => {
-      return axios
-        .patch<LoginResponse>(`${SERVER_URL}auth/verify/${req.id}`, req)
-        .then((response) => {
-          return response.data;
-        })
-        .catch((err) => {
-          console.error("Error when verifying", err);
-          throw err;
-        });
-    },
-    onSuccess: (payload) => {
-      setCredentials(payload.token); // TODO: Check async
-      queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], {
-        ...payload.user,
-        authenticated: true,
-      });
-    },
-  });
 };

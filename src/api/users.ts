@@ -12,6 +12,7 @@ const USER_INITIAL_DATA = {
   name: "",
   role: UserScopes.Unverified,
   authenticated: false,
+  createdAt: new Date(),
 };
 
 export const getUser = (id: string) => {
@@ -63,12 +64,13 @@ export const updateUser = () => {
   return useMutation({
     mutationFn: async (req: {
       id: string;
-      email: string;
-      password: string;
-      role: UserScopes;
+      name?: string;
+      email?: string;
+      password?: string;
+      role?: UserScopes;
     }): Promise<IUser> => {
       return axios
-        .patch(`${SERVER_URL}users/${req.id}`, req)
+        .put(`${SERVER_URL}users/${req.id}`, req)
         .then((response) => {
           return response.data;
         })
@@ -106,23 +108,19 @@ export const deleteUser = () => {
 
 const GET_PENDING_USERS = "users/pending";
 
-export type PartialUser = {
-  id: string;
-  name: string;
-  email: string;
-  date: Date;
-};
-
 export const getPendingUsers = () => {
   const nav = useNavigate();
 
   return useQuery({
     queryKey: [GET_PENDING_USERS],
-    queryFn: async (): Promise<PartialUser[]> => {
+    queryFn: async (): Promise<IUser[]> => {
       return axios
-        .get<PartialUser[]>(`${SERVER_URL}auth/pending`)
+        .get<IUser[]>(`${SERVER_URL}users/pending`)
         .then((response) => {
-          return response.data as PartialUser[];
+          return response.data.map((user) => ({
+            ...user,
+            createdAt: new Date(user.createdAt),
+          }));
         })
         .catch((error) => {
           console.error("Error when getting pending users", error);
@@ -140,11 +138,14 @@ export const getApprovedUsers = () => {
 
   return useQuery({
     queryKey: [GET_ADMINS],
-    queryFn: async (): Promise<PartialUser[]> => {
+    queryFn: async (): Promise<IUser[]> => {
       return axios
-        .get<PartialUser[]>(`${SERVER_URL}auth/admins`)
+        .get<IUser[]>(`${SERVER_URL}users/admins`)
         .then((response) => {
-          return response.data as PartialUser[];
+          return response.data.map((user) => ({
+            ...user,
+            createdAt: new Date(user.createdAt),
+          }));
         })
         .catch((error) => {
           console.error("Error when getting pending users", error);
@@ -159,11 +160,13 @@ export const approveUser = () => {
   const nav = useNavigate();
 
   return useMutation({
-    mutationFn: async (req: { email: string }) => {
-      return axios.post(`${SERVER_URL}auth/pending`, req).catch((error) => {
-        alert("Error when getting pending admins" + error);
-        throw error;
-      });
+    mutationFn: async (req: { id: string }) => {
+      return axios
+        .post(`${SERVER_URL}users/${req.id}/approve`)
+        .catch((error) => {
+          alert("Error when approving pending admin" + error);
+          throw error;
+        });
     },
     onError: () => {
       nav(ROUTES.DASHBOARD);
