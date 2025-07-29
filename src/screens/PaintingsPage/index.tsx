@@ -75,7 +75,7 @@ function PaintingsPage() {
 
   return (
     <>
-      <PageHeader title={"Manage HDIL"}></PageHeader>
+      <PageHeader title={"Manage HDIL"} />
       <div className="paintings-container">
         <div
           style={{

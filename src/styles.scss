@@ -25,9 +25,9 @@
 body,
 html,
 #main {
-  min-height: 100vh;
   margin: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
   width: 100%;
   height: 100%;
   background-color: var(--background);
@@ -40,6 +40,11 @@ html,
   justify-content: center;
   align-items: center;
   flex-direction: column;
+}
+
+.expand {
+  width: 100%;
+  height: 100%;
 }
 
 button,
@@ -56,6 +61,13 @@ button,
   text-align: center;
 }
 
+button.small,
+.button.small {
+  padding: 5px 15px;
+  font-size: 14px;
+  min-width: 100px;
+}
+
 button:hover,
 .button:hover {
   filter: brightness(0.8);
@@ -67,9 +79,21 @@ button.primary,
   color: black;
 }
 
-button.danger {
+button.danger,
+.button.danger {
   background-color: var(--error);
   color: white;
+}
+
+button.transparent,
+.button.transparent {
+  font-size: 1.2rem;
+  background-color: transparent;
+  color: var(--text);
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 5px;
 }
 
 input,

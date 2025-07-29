@@ -1,0 +1,36 @@
+.welcome-container {
+  height: 100%;
+  width: 100%;
+  padding: 40px 20px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .welcome-title {
+    flex-shrink: 0;
+    font-size: 5rem;
+    font-weight: 300;
+  }
+
+  .tiles-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tiles-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .welcome-title {
+    font-size: 3rem;
+  }
+}

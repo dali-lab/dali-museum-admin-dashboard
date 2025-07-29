@@ -1,215 +1,193 @@
-import {
-  approveUser,
-  getApprovedUsers,
-  getPendingUsers,
-  PartialUser,
-} from "@/api/users";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./AdminRequests.css";
+import { approveUser, getApprovedUsers, getPendingUsers } from "@/api/users";
+import React, { useCallback, useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import { ROUTES } from "@/utils/constants";
+import "./AdminRequests.scss";
+import Footer from "@/components/Footer/Footer";
+import { IUser } from "@/types/users";
+import Modal from "@/components/Modal";
 
-// Define interfaces for type safety
-interface RequestItem {
-  id: number;
-  name: string;
-  email: string;
-  date: Date;
-  // status: string;
+interface ModalProps {
+  userName: string;
+  isOpen: boolean;
+  close: () => void;
 }
 
+const ApproveModal: React.FC<ModalProps & { submit: () => void }> = ({
+  userName,
+  isOpen,
+  close,
+  submit,
+}) => {
+  return (
+    <Modal isOpen={isOpen} onClose={close}>
+      <div className="admin-modal-content">
+        <div className="modal-title">
+          Are you sure you want to approve {userName}'s admin request?
+        </div>
+        <div className="modal-text">
+          This grants them full access to the HDIL admin dashboard, including
+          settings, data, and editing permissions.
+        </div>
+        <div className="modal-buttons">
+          <button onClick={close}>Cancel</button>
+          <button className="primary" onClick={submit}>
+            Approve
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+const SuccessModal: React.FC<ModalProps> = ({ isOpen, close, userName }) => {
+  return (
+    <Modal isOpen={isOpen} onClose={close}>
+      <div className="admin-modal-content">
+        <div className="modal-title">Admin Access Approved</div>
+        <div className="modal-text">
+          You have successfully granted {userName} access to the HDIL admin
+          dashboard. They now have full permissions.
+        </div>
+        <div className="modal-buttons">
+          <button className="modal-btn ok-btn" onClick={close}>
+            OK
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
 const AdminRequests: React.FC = () => {
-  const nav = useNavigate();
   const { data: pendingUsers } = getPendingUsers();
   const { data: admins } = getApprovedUsers();
-  const approvePendingUser = approveUser();
+  const [currentUser, setCurrentUser] = useState<IUser | null>(null);
+
+  const { mutate: mutateApprovePendingUser } = approveUser();
 
   const [showApproveModal, setShowApproveModal] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState<PartialUser | null>(null);
 
-  const handleApproveClick = (user: PartialUser): void => {
+  const handleApproveClick = useCallback((user: IUser) => {
     setCurrentUser(user);
     setShowApproveModal(true);
-  };
+  }, []);
 
-  const handleConfirmApprove = (): void => {
+  const handleConfirmApprove = useCallback(() => {
+    if (currentUser) {
+      mutateApprovePendingUser({ id: currentUser.id });
+    }
+
     setShowApproveModal(false);
     setShowSuccessModal(true);
-  };
-
-  const completeApproval = (): void => {
-    setShowSuccessModal(false);
-
-    if (currentUser) {
-      approvePendingUser.mutate({ email: currentUser.email });
-    }
-  };
+  }, [currentUser, mutateApprovePendingUser]);
 
   return (
     <>
       <PageHeader title="Admin Requests" selected={ROUTES.ADMIN_REQUESTS} />
       <div className="admin-page">
-        <div className="container">
-          <div className="section-title">Active</div>
-          <div className="table-header">
-            <div>Name</div>
-            <div>Date Submitted</div>
-            <div>Status</div>
-            <div></div>
+        <div className="admin-container">
+          <div className="expand">
+            <h2>Requests</h2>
+
+            {pendingUsers && pendingUsers.length > 0 ? (
+              <table>
+                <colgroup>
+                  <col />
+                  <col style={{ width: "20%" }} />
+                  <col style={{ width: "20%" }} />
+                  <col style={{ width: "25%" }} />
+                </colgroup>
+
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Date Submitted</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {pendingUsers &&
+                    pendingUsers.map((request) => (
+                      <tr key={request.id}>
+                        <td>{request.name}</td>
+                        <td>{request.createdAt.getDate()}</td>
+                        <td className="status">Pending</td>
+                        <td className="actions">
+                          <button className="small">Deny</button>
+                          <button
+                            className="small primary"
+                            onClick={() => handleApproveClick(request)}
+                          >
+                            Approve
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No requests.</p>
+            )}
           </div>
 
-          {pendingUsers &&
-            pendingUsers.map((request) => (
-              <div className="table-row" key={request.id}>
-                <div>{request.name}</div>
-                <div>{request.date.getDate()}</div>
-                <div className="status">
-                  <div className="status-text">Needs Review</div>
-                </div>
-                <div className="actions">
-                  <button className="deny-btn">Deny</button>
-                  <button
-                    className="approve-btn"
-                    onClick={() => handleApproveClick(request)}
-                  >
-                    Approve
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="expand">
+            <h2>Current Admins</h2>
 
-          <div className="section-divider"></div>
+            <table>
+              <colgroup>
+                <col />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "25%" }} />
+              </colgroup>
 
-          {pendingUsers &&
-            pendingUsers.map((request) => (
-              <div className="table-row" key={request.id}>
-                <div>{request.name}</div>
-                <div>{request.date.getDate()}</div>
-                <div className="status">
-                  <div className="status-text">Needs Review</div>
-                </div>
-                <div className="actions">
-                  <button className="deny-btn">Deny</button>
-                  <button
-                    className="approve-btn"
-                    onClick={() => handleApproveClick(request)}
-                  >
-                    Approve
-                  </button>
-                </div>
-              </div>
-            ))}
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Date Submitted</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
 
-          <div className="section-divider"></div>
-
-          {admins &&
-            admins.map((admin) => (
-              <div className="current-admins-row" key={admin.id}>
-                <div>{admin.name}</div>
-                <div>{admin.date.getDate()}</div>
-                <div className="approved">Approved</div>
-              </div>
-            ))}
-        </div>
-
-        {admins &&
-          admins.map((admin) => (
-            <div className="current-admins-row" key={admin.id}>
-              <div>{admin.name}</div>
-              <div>{admin.date.getDate()}</div>
-              <div className="approved">Approved</div>
-            </div>
-          ))}
-      </div>
-
-      <div className="footer">
-        <div className="logo-container">
-          <svg className="logo" viewBox="0 0 100 40">
-            <text x="10" y="30" fill="white" fontSize="24">
-              DALI
-            </text>
-          </svg>
+              <tbody>
+                {admins &&
+                  admins.map((admin) => (
+                    <tr key={admin.id}>
+                      <td>{admin.name}</td>
+                      <td>{admin.createdAt.getDate()}</td>
+                      <td className="approved">Approved</td>
+                      <td className="actions">
+                        <button className="small danger">Revoke</button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Approve Confirmation Modal */}
-        {showApproveModal && currentUser && (
-          <div className="modal">
-            <div className="modal-content">
-              <span
-                className="close"
-                onClick={() => setShowApproveModal(false)}
-              >
-                &times;
-              </span>
-              <div className="modal-title">
-                Are you sure you want to approve {currentUser.name}'s admin
-                request?
-              </div>
-              <div className="modal-text">
-                This grants them full access to the HDIL admin dashboard,
-                including settings, data, and editing permissions.
-              </div>
-              <div className="modal-buttons">
-                <button
-                  className="modal-btn no-btn"
-                  onClick={() => setShowApproveModal(false)}
-                >
-                  &times;
-                </button>
-                <div className="modal-title">
-                  Are you sure you want to approve {currentUser.name}'s admin
-                  request?
-                </div>
-                <div className="modal-text">
-                  This grants them full access to the HDIL admin dashboard,
-                  including settings, data, and editing permissions.
-                </div>
-                <div className="modal-buttons">
-                  <button
-                    className="modal-btn no-btn"
-                    onClick={() => setShowApproveModal(false)}
-                  >
-                    No
-                  </button>
-                  <button
-                    className="modal-btn yes-btn"
-                    onClick={handleConfirmApprove}
-                  >
-                    Yes
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        <ApproveModal
+          isOpen={showApproveModal && !!currentUser}
+          submit={handleConfirmApprove}
+          userName={currentUser?.name ?? ""}
+          close={() => setShowApproveModal(false)}
+        />
 
         {/* Success Modal */}
-        {showSuccessModal && currentUser && (
-          <div className="modal">
-            <div className="modal-content">
-              <span
-                className="close"
-                onClick={() => setShowSuccessModal(false)}
-              >
-                &times;
-              </span>
-              <div className="modal-title">Admin Access Approved</div>
-              <div className="modal-text">
-                You have successfully granted {currentUser.name} access to the
-                HDIL admin dashboard. They now have credentials and full
-                permissions.
-              </div>
-              <div className="modal-buttons">
-                <button className="modal-btn ok-btn" onClick={completeApproval}>
-                  OK
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <SuccessModal
+          isOpen={showSuccessModal && !!currentUser}
+          userName={currentUser?.name ?? ""}
+          close={() => setShowSuccessModal(false)}
+        />
       </div>
+
+      <Footer />
     </>
   );
 };

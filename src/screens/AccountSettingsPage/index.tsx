@@ -5,22 +5,13 @@ import { useCallback, useState } from "react";
 import "./styles.scss";
 import Modal from "@/components/Modal";
 import { ROUTES } from "@/utils/constants";
-
-const EMPTY_ERRORS = {
-  name: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
+import { getAuthUser, logout } from "@/api/auth";
+import { AuthErrors, EMPTY_AUTH_ERRORS } from "@/types/errors";
 
 const AccountSettingsPage: React.FC = () => {
   // get current user data either from local storage or from the store
   // depending on how login is set up
-  const user = {
-    id: "123abc",
-    name: "username",
-    email: "my.cool.email.address@example.com",
-  }; // <- TODO
+  const user = getAuthUser().data;
 
   const [updatedUser, setUpdatedUser] = useState(user);
   const [password, setPassword] = useState("");
@@ -30,19 +21,19 @@ const AccountSettingsPage: React.FC = () => {
 
   const { mutate: mutateUpdateUser } = updateUser();
   const { mutate: mutateDeleteUser } = deleteUser();
+  const { mutate: mutateLogout } = logout();
 
-  const [errors, setErrors] = useState(EMPTY_ERRORS);
+  const [errors, setErrors] = useState(EMPTY_AUTH_ERRORS);
   const updateError = useCallback(
-    (key: string, value: string) => {
-      setErrors({ ...errors, [key]: value });
+    (newValue: Partial<AuthErrors>) => {
+      setErrors((prev) => ({ ...prev, ...newValue }));
     },
-    [errors, setErrors]
+    [setErrors]
   );
   const getErrors = useCallback(() => {
-    const newErrors = { ...EMPTY_ERRORS };
-    if (updatedUser.name === "") newErrors.name = "Your name cannot be empty";
-    if (updatedUser.email === "")
-      newErrors.email = "Your email cannot be empty";
+    const newErrors = { ...EMPTY_AUTH_ERRORS };
+    if (updatedUser.name === "") newErrors.name = "Name cannot be empty";
+    if (updatedUser.email === "") newErrors.email = "Email cannot be empty";
     if (!updatedUser.email.includes("@"))
       newErrors.email = "Email must be a valid email address";
     if (password.length > 0 && password.length < 8)
@@ -72,14 +63,12 @@ const AccountSettingsPage: React.FC = () => {
       id: user.id,
       password: password === "" ? undefined : password,
     });
-  }, [updatedUser, password, confirmPassword, setErrors, getErrors]);
+  }, [getErrors, mutateUpdateUser, updatedUser, user.id, password]);
 
   const handleDelete = useCallback(() => {
     mutateDeleteUser({ id: user.id });
-
-    // log out
-    // TODO depends on how login is set up
-  }, [mutateDeleteUser, user.id]);
+    mutateLogout();
+  }, [mutateDeleteUser, mutateLogout, user.id]);
 
   return (
     <>
@@ -92,7 +81,7 @@ const AccountSettingsPage: React.FC = () => {
             value={updatedUser.name}
             onChange={(value) => {
               setUpdatedUser({ ...updatedUser, name: value });
-              updateError("name", "");
+              updateError({ name: "" });
             }}
             onBlur={() => setErrors(getErrors())}
             error={errors.name}
@@ -102,31 +91,30 @@ const AccountSettingsPage: React.FC = () => {
             value={updatedUser.email}
             onChange={(value) => {
               setUpdatedUser({ ...updatedUser, email: value });
-              updateError("email", "");
+              updateError({ email: "" });
             }}
             onBlur={() => setErrors(getErrors())}
             error={errors.email}
           />
           <TextInput
             type="password"
-            label="Change password"
+            label="Change Password"
             value={password}
             onChange={(value) => {
               setPassword(value);
-              updateError("password", "");
               // remove the error for confirm password too
-              updateError("confirmPassword", "");
+              updateError({ password: "", confirmPassword: "" });
             }}
             onBlur={() => setErrors(getErrors())}
             error={errors.password}
           />
           <TextInput
             type="password"
-            label="Confirm Password"
+            label="Confirm New Password"
             value={confirmPassword}
             onChange={(value) => {
               setConfirmPassword(value);
-              updateError("confirmPassword", "");
+              updateError({ confirmPassword: "" });
             }}
             onBlur={() => setErrors(getErrors())}
             error={errors.confirmPassword}
@@ -138,6 +126,9 @@ const AccountSettingsPage: React.FC = () => {
               onClick={() => setConfirmDeleteModalOpen(true)}
             >
               Delete account
+            </button>
+            <button className="danger" onClick={() => mutateLogout()}>
+              Log out
             </button>
             <button className="primary" onClick={handleSave}>
               Save changes
@@ -154,7 +145,7 @@ const AccountSettingsPage: React.FC = () => {
         <h2>Are you sure you want to delete your account?</h2>
         <p>You will lose access to the HDIL admin dashboard and data.</p>
 
-        <div className="button-container">
+        <div className="delete-modal-button-container">
           <button onClick={() => setConfirmDeleteModalOpen(false)}>
             Cancel
           </button>
