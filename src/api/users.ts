@@ -158,15 +158,24 @@ export const getApprovedUsers = () => {
 
 export const approveUser = () => {
   const nav = useNavigate();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (req: { id: string }) => {
       return axios
-        .post(`${SERVER_URL}users/${req.id}/approve`)
+        .post<IUser>(`${SERVER_URL}users/${req.id}/approve`)
         .catch((error) => {
           alert("Error when approving pending admin" + error);
           throw error;
         });
+    },
+    onSuccess: (res, req) => {
+      // remove admin from pending
+      queryClient.setQueryData([GET_PENDING_USERS], (prev: IUser[]) => {
+        return prev.filter((user) => user.id !== req.id);
+      });
+      // invalidate approved admins query to refresh list
+      queryClient.invalidateQueries({ queryKey: [GET_ADMINS] });
     },
     onError: () => {
       nav(ROUTES.DASHBOARD);

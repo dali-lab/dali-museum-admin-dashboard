@@ -9,6 +9,7 @@ export interface IUser {
   email: string;
   name: string;
   role: UserScopes;
+  isVerified: boolean;
   createdAt: Date;
 }
 

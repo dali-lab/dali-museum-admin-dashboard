@@ -18,6 +18,7 @@ const USER_INITIAL_DATA = {
   email: "",
   name: "",
   role: UserScopes.Unverified,
+  isVerified: false,
   authenticated: false,
 };
 
@@ -60,16 +61,14 @@ export const signUp = () => {
       name: string;
       role: UserScopes;
     }) => {
-      return axios.post<IUser, LoginResponse>(
-        `${SERVER_URL}auth/signup`,
-        credentials
-      );
+      return axios.post<LoginResponse>(`${SERVER_URL}auth/signup`, credentials);
     },
-    onSuccess: (payload) => {
+    onSuccess: ({ data: payload }) => {
       queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], {
         ...payload.user,
         authenticated: true,
       });
+      setCredentials(payload.token);
       nav(ROUTES.DASHBOARD);
     },
     onError: (error) => {
@@ -85,31 +84,31 @@ export const signIn = () => {
   return useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
       return axios
-        .post<LoginResponse>(`${SERVER_URL}auth/login`, credentials)
+        .post<LoginResponse & { errors: string[] }>(
+          `${SERVER_URL}auth/login`,
+          credentials
+        )
         .then((response) => {
-          if (response.status == 403) {
-            // forbidden - not verified
-            return {
-              user: { email: credentials.email },
-              verified: false,
-            };
-          }
-          setCredentials(response.data.token); // TODO: Check async
-          return { ...response.data };
+          return response;
         })
         .catch((error) => {
-          // TODO better error messages
-          alert("Incorrect credentials.");
-          console.error("Error when logging in", error);
+          if (error.response?.status == 401)
+            throw Error(error.response?.data.errors[0]);
+
           throw error;
         });
     },
-    onSuccess: (payload) => {
+    onSuccess: ({ data: payload }) => {
+      setCredentials(payload.token); // TODO: Check async
       queryClient.setQueryData([GET_AUTH_USER_DATA_KEY], {
         ...payload.user,
         authenticated: true,
       });
       nav(ROUTES.DASHBOARD);
+    },
+    onError: (error) => {
+      alert(error.message);
+      console.error("Error when logging in", error);
     },
   });
 };
@@ -153,6 +152,8 @@ export const jwtSignIn = () => {
         ...USER_INITIAL_DATA,
         authenticated: false,
       });
+      // logout
+      setCredentials("");
     },
   });
 };
