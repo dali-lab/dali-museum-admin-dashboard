@@ -46,7 +46,7 @@ const EditCuratorHeatmapPage: React.FC = () => {
     Object.entries(heatmapPoints).forEach(([key, value]) => {
       const { x, y } = JSON.parse(key);
       points.push([x, y]);
-      properties.push([value, 1]); // TODO check how unity experience constructs this array
+      properties.push([0.25, value]); // TODO the radius is hardcoded per painting in unity. why
     });
 
     return [points, properties];
@@ -56,7 +56,7 @@ const EditCuratorHeatmapPage: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { gl, program } = useHeatmapShader(
     canvasRef.current,
-    "", // TODO add texture
+    "/heatmap_texture.png",
     pointsArray,
     propertiesArray
   );
@@ -64,11 +64,10 @@ const EditCuratorHeatmapPage: React.FC = () => {
   const clearCanvas = useCallback(() => {
     if (!gl || !program) return;
 
-    // gl.clearColor(0.0, 0.0, 0.0, 0.0); // clear canvas
-    // gl.clear(gl.COLOR_BUFFER_BIT); // clear color buffer
+    gl.clearColor(0.0, 0.0, 0.0, 0.0); // clear canvas
+    gl.clear(gl.COLOR_BUFFER_BIT); // clear color buffer
 
     // setHeatmapPoints({}); // clear heatmap points
-    // console.log(heatmapPoints);
   }, [gl, program]);
 
   // when painting is loaded, set heatmap points
