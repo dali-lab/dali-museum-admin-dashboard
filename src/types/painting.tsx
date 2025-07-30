@@ -21,7 +21,6 @@ export interface IPainting {
   url: string;
 
   annotations: IAnnotation[];
-  curatorHeatmapPoints: IPoint[];
   activePostviewImage: string; // id
 
   annotationColor: string;
@@ -32,4 +31,9 @@ export interface IPainting {
 
   exhibitionPossible: boolean;
   researchPossible: boolean;
+}
+
+export interface ICuratorHeatmap {
+  paintingId: string;
+  points: IPoint[];
 }

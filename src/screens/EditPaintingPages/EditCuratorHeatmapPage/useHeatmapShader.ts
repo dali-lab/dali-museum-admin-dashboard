@@ -47,6 +47,8 @@ const useHeatmapShader = (
         const texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
+        //this vvv fixes a weird transparency issue
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
         gl.texImage2D(
           gl.TEXTURE_2D, // target
           0, // mipmap level (?)
@@ -75,8 +77,6 @@ const useHeatmapShader = (
     (gl: WebGLRenderingContext, program: WebGLProgram) => {
       // enable floating point textures
       gl.getExtension("OES_texture_float");
-      //this vvv fixes a weird transparency issue
-      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
       // add vertices
       const vertices = new Float32Array([
@@ -105,8 +105,8 @@ const useHeatmapShader = (
       // opengl doesn't like big arrays so i'll attach them as a texture instead
       const pointData = new Float32Array(points.length * 4);
       for (let i = 0; i < points.length; i++) {
-        pointData[i * 4] = points[i][0] / (canvas?.width ?? 1) / 10; // TODO fix this
-        pointData[i * 4 + 1] = points[i][1] / (canvas?.height ?? 1) / 10; // TODO
+        pointData[i * 4] = points[i][0]; // x
+        pointData[i * 4 + 1] = 1 - points[i][1]; // y (inverted because i think webgl y axis is inverted)
         pointData[i * 4 + 2] = properties[i][0]; // radius
         pointData[i * 4 + 3] = properties[i][1]; // intensity
       }
@@ -116,6 +116,8 @@ const useHeatmapShader = (
       const texture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, texture);
 
+      // need to turn it off again after i turned it on for the heatmap texture
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
       gl.texImage2D(
         gl.TEXTURE_2D, // target
         0, // mipmap level (?)
