@@ -13,6 +13,8 @@ const useHeatmapShader = (
     program: WebGLProgram | null;
   }>({ gl: null, program: null });
 
+  const [isHeatmapTexLoaded, setIsHeatmapTexLoaded] = useState(false);
+
   const createShader = useCallback(
     (gl: WebGLRenderingContext, type: number, source: string) => {
       // create shader
@@ -62,9 +64,80 @@ const useHeatmapShader = (
 
         const uHeatTexLoc = gl.getUniformLocation(program, "u_HeatTex");
         gl.uniform1i(uHeatTexLoc, 0); // texture 0
+
+        setIsHeatmapTexLoaded(true);
       };
     },
     []
+  );
+
+  const attachUniforms = useCallback(
+    (gl: WebGLRenderingContext, program: WebGLProgram) => {
+      // enable floating point textures
+      gl.getExtension("OES_texture_float");
+      //this vvv fixes a weird transparency issue
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+
+      // add vertices
+      const vertices = new Float32Array([
+        ...[-1, -1], // bottom left
+        ...[1, -1], // bottom right
+        ...[-1, 1], // top left
+        ...[1, 1], // top right
+      ]);
+      const vertexBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+      const positionLoc = gl.getAttribLocation(program, "a_position");
+      gl.enableVertexAttribArray(positionLoc);
+      gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+
+      // create and bind heatmap texture
+      createHeatmapTexture(gl, program, texturePath);
+
+      // can attach any other constant uniforms here
+    },
+    [createHeatmapTexture, texturePath]
+  );
+
+  const createPointTexture = useCallback(
+    (gl: WebGLRenderingContext, program: WebGLProgram) => {
+      // opengl doesn't like big arrays so i'll attach them as a texture instead
+      const pointData = new Float32Array(points.length * 4);
+      for (let i = 0; i < points.length; i++) {
+        pointData[i * 4] = points[i][0] / (canvas?.width ?? 1) / 10; // TODO fix this
+        pointData[i * 4 + 1] = points[i][1] / (canvas?.height ?? 1) / 10; // TODO
+        pointData[i * 4 + 2] = properties[i][0]; // radius
+        pointData[i * 4 + 3] = properties[i][1]; // intensity
+      }
+
+      // create texture
+      gl.activeTexture(gl.TEXTURE1);
+      const texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+
+      gl.texImage2D(
+        gl.TEXTURE_2D, // target
+        0, // mipmap level (?)
+        gl.RGBA, // internal format
+        points.length, // width
+        1, // height
+        0, // border
+        gl.RGBA, // format
+        gl.FLOAT, // type
+        pointData
+      );
+
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+      // attach texture to sampler
+      const uPointsTexLoc = gl.getUniformLocation(program, "u_PointTex");
+      gl.uniform1i(uPointsTexLoc, 1); // texture 1
+    },
+    [canvas, points, properties]
   );
 
   const draw = useCallback(() => {
@@ -121,83 +194,37 @@ const useHeatmapShader = (
 
       setGL({ gl, program: shaderProgram });
 
-      // enable floating point textures
-      gl.getExtension("OES_texture_float");
-      //this vvv fixes a weird transparency issue
-      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-
-      // add vertices
-      const vertices = new Float32Array([
-        ...[-1, -1], // bottom left
-        ...[1, -1], // bottom right
-        ...[-1, 1], // top left
-        ...[1, 1], // top right
-      ]);
-      const vertexBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-      const positionLoc = gl.getAttribLocation(shaderProgram, "a_position");
-      gl.enableVertexAttribArray(positionLoc);
-      gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
-
-      // create and bind heatmap texture
-      createHeatmapTexture(gl, shaderProgram, texturePath);
-
-      // can attach any other constant uniforms here
+      attachUniforms(gl, shaderProgram);
     } catch (error) {
       console.error("webgl error:", (error as Error).message);
       alert("Failed to load heatmap shader.");
     }
-  }, [canvas, createShader, createHeatmapTexture, texturePath]);
+  }, [attachUniforms, canvas, createShader, texturePath]);
 
   // attach points and properties every time they change
   // and also redraw
   useEffect(() => {
-    if (!GL.gl || !GL.program) return;
+    if (!GL.gl || !GL.program || !isHeatmapTexLoaded) return;
     const { gl, program } = GL;
 
     const uPointsLength = gl.getUniformLocation(program, "u_PointsLength");
     const pointsLength = points.length;
     gl.uniform1i(uPointsLength, pointsLength);
 
-    // opengl doesn't like big arrays so i'll attach them as a texture instead
-    const pointData = new Float32Array(points.length * 4);
-    for (let i = 0; i < points.length; i++) {
-      pointData[i * 4] = points[i][0] / (canvas?.width ?? 1) / 10; // TODO fix this
-      pointData[i * 4 + 1] = points[i][1] / (canvas?.height ?? 1) / 10; // TODO
-      pointData[i * 4 + 2] = properties[i][0]; // radius
-      pointData[i * 4 + 3] = properties[i][1]; // intensity
-    }
-
-    // create texture
-    gl.activeTexture(gl.TEXTURE1);
-    const texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-
-    gl.texImage2D(
-      gl.TEXTURE_2D, // target
-      0, // mipmap level (?)
-      gl.RGBA, // internal format
-      points.length, // width
-      1, // height
-      0, // border
-      gl.RGBA, // format
-      gl.FLOAT, // type
-      pointData
-    );
-
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-    // attach texture to sampler
-    const uPointsTexLoc = gl.getUniformLocation(program, "u_PointTex");
-    gl.uniform1i(uPointsTexLoc, 1); // texture 1
+    createPointTexture(gl, program);
 
     // finally, redraw
     draw();
-  }, [GL, canvas, draw, points, properties, texturePath]);
+  }, [
+    GL,
+    canvas,
+    createPointTexture,
+    draw,
+    isHeatmapTexLoaded,
+    points,
+    properties,
+    texturePath,
+  ]);
 
   return GL;
 };
