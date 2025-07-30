@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import "./styles.scss";
 import { ROUTES } from "@/utils/constants";
 import {
@@ -9,6 +9,7 @@ import {
 } from "@/api/postviewImages";
 import UploadFileButton from "@/components/UploadFileButton";
 import { useElementSize } from "@/hooks/useElementSize";
+import { getPainting } from "@/api/paintings";
 
 const EditPostviewImagePage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,14 +20,19 @@ const EditPostviewImagePage: React.FC = () => {
     }
   }, [navigate, paintingId]);
 
-  const { data: postviewImage, isLoading } = getActivePostviewImage(
+  const { data: painting, isLoading: isPaintingLoading } = getPainting(
     paintingId ?? ""
+  );
+
+  const { data: postviewImage, isLoading } = getActivePostviewImage(
+    painting?.activePostviewImage ?? ""
   );
 
   // i need the image size to resize the button row below the image
   const imageRect = useElementSize("postview-image", [postviewImage]);
 
-  const { mutate: mutateCreatePostviewImage } = createPostviewImage();
+  const { mutate: mutateCreatePostviewImage, isPending } =
+    createPostviewImage();
   const { mutate: mutateRemovePostviewImage } = removePostviewImage();
 
   const handleUploadPostviewImageSubmit = useCallback(
@@ -63,7 +69,7 @@ const EditPostviewImagePage: React.FC = () => {
     );
   }, [mutateRemovePostviewImage, paintingId, postviewImage]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isPaintingLoading || isLoading) return <p>Loading...</p>;
 
   return (
     <div className="postview-page">
@@ -77,7 +83,7 @@ const EditPostviewImagePage: React.FC = () => {
           <div className="postview-buttons" style={{ width: imageRect.width }}>
             <button onClick={handleRemovePostviewImage}>Remove</button>
             <UploadFileButton handleUpload={handleUploadPostviewImageSubmit}>
-              Change Image
+              {isPending ? "Loading..." : "Change Image"}
             </UploadFileButton>
           </div>
         </>
@@ -87,7 +93,9 @@ const EditPostviewImagePage: React.FC = () => {
           <UploadFileButton
             handleUpload={handleUploadPostviewImageSubmit}
             type="primary"
-          />
+          >
+            {isPending ? "Loading..." : null}
+          </UploadFileButton>
         </div>
       )}
     </div>

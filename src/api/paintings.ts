@@ -21,7 +21,7 @@ export const getPaintings = () => {
   });
 };
 
-const GET_PAINTING_KEY = "painting/byId";
+export const GET_PAINTING_KEY = "painting/byId";
 export const getPainting = (
   id: string,
   options?: { retry: boolean | number }

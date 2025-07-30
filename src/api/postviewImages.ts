@@ -2,15 +2,19 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { SERVER_URL } from "@/utils/constants";
 import { IPostviewImage } from "@/types/postviewImage";
+import { GET_PAINTING_KEY } from "./paintings";
 
 export const GET_POSTVIEW_IMAGE_KEY = "postviewImage";
 
-export const getActivePostviewImage = (paintingId: string) => {
+export const getActivePostviewImage = (postviewImageId: string) => {
   return useQuery({
-    queryKey: [GET_POSTVIEW_IMAGE_KEY, paintingId],
+    queryKey: [GET_POSTVIEW_IMAGE_KEY, postviewImageId],
     queryFn: async (): Promise<IPostviewImage | null> => {
+      console.log("getting active postview image");
+      if (postviewImageId === "") return null;
+
       return axios
-        .get<IPostviewImage>(`${SERVER_URL}postviewImages/active/${paintingId}`)
+        .get<IPostviewImage>(`${SERVER_URL}postview-images/${postviewImageId}`)
         .then((response) => {
           return response.data;
         })
@@ -39,7 +43,7 @@ export const createPostviewImage = () => {
       formData.append("image", req.image);
 
       return axios
-        .post<IPostviewImage>(`${SERVER_URL}postviewImages/`, formData, {
+        .post<IPostviewImage>(`${SERVER_URL}postview-images/`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         })
         .then((response) => {
@@ -50,9 +54,12 @@ export const createPostviewImage = () => {
           throw Error(error.response?.data?.errors.join("; ") ?? error);
         });
     },
-    onSuccess: (payload: IPostviewImage) => {
+    onSuccess: (payload: IPostviewImage, { paintingId }) => {
       queryClient.invalidateQueries({
-        queryKey: [GET_POSTVIEW_IMAGE_KEY, payload.paintingId],
+        queryKey: [GET_POSTVIEW_IMAGE_KEY, payload.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [GET_PAINTING_KEY, paintingId],
       });
     },
   });
@@ -67,7 +74,7 @@ export const removePostviewImage = () => {
       paintingId: string;
     }): Promise<IPostviewImage> => {
       return axios
-        .delete<IPostviewImage>(`${SERVER_URL}postviewImages/${req.id}`)
+        .delete<IPostviewImage>(`${SERVER_URL}postview-images/${req.id}`)
         .then((response) => {
           return response.data;
         })
@@ -76,9 +83,12 @@ export const removePostviewImage = () => {
           throw Error(error.response?.data?.errors.join("; ") ?? error);
         });
     },
-    onSuccess: (payload: IPostviewImage, { paintingId }) => {
+    onSuccess: (payload: IPostviewImage, { id, paintingId }) => {
       queryClient.invalidateQueries({
-        queryKey: [GET_POSTVIEW_IMAGE_KEY, paintingId],
+        queryKey: [GET_POSTVIEW_IMAGE_KEY, id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [GET_PAINTING_KEY, paintingId],
       });
     },
   });
