@@ -8,15 +8,27 @@
   margin-top: 60px;
 
   .settings-container {
-    width: fit-content;
+    min-width: fit-content;
+    width: 33%;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
   }
+
+  .button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+
+    margin-top: 40px;
+  }
 }
 
-.button-container {
+.delete-modal-button-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;

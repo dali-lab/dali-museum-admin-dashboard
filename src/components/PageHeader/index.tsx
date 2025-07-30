@@ -21,30 +21,33 @@ const PageHeader = ({ title, children, selected }: PageHeaderProps) => {
   const props = { className: "header-icon", size: 30 };
   return (
     <div className="page-header">
-      {selected == ROUTES.SETTINGS ? (
-        <BsGearFill {...props} style={{ color: "#AAEAE5" }} />
-      ) : (
-        <Link to={ROUTES.SETTINGS}>
-          <BsGear {...props} />
-        </Link>
-      )}
-      {selected == ROUTES.DASHBOARD ? (
-        <BsHouseFill {...props} style={{ color: "#AAEAE5" }} />
-      ) : (
-        <Link to={ROUTES.DASHBOARD}>
-          <BsHouse {...props} />
-        </Link>
-      )}
-      {selected == ROUTES.ADMIN_REQUESTS ? (
-        <BsBellFill {...props} style={{ color: "#AAEAE5" }} />
-      ) : (
-        <Link to={ROUTES.ADMIN_REQUESTS}>
-          <BsBell {...props} />
-        </Link>
-      )}
+      <div className="absolute-container">
+        {selected == ROUTES.SETTINGS ? (
+          <BsGearFill {...props} style={{ color: "#AAEAE5" }} />
+        ) : (
+          <Link to={ROUTES.SETTINGS}>
+            <BsGear {...props} />
+          </Link>
+        )}
+        {selected == ROUTES.DASHBOARD ? (
+          <BsHouseFill {...props} style={{ color: "#AAEAE5" }} />
+        ) : (
+          <Link to={ROUTES.DASHBOARD}>
+            <BsHouse {...props} />
+          </Link>
+        )}
+        {selected == ROUTES.ADMIN_REQUESTS ? (
+          <BsBellFill {...props} style={{ color: "#AAEAE5" }} />
+        ) : (
+          <Link to={ROUTES.ADMIN_REQUESTS}>
+            <BsBell {...props} />
+          </Link>
+        )}
 
-      <h1 className="title">{title}</h1>
-      {<>{children}</>}
+        <h1 className="title">{title}</h1>
+
+        {children}
+      </div>
     </div>
   );
 };

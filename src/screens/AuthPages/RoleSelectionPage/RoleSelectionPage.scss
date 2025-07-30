@@ -1,0 +1,49 @@
+.role-selection-container {
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .role-selection-title {
+    font-size: 5rem;
+    font-weight: 300;
+    margin-top: 60px;
+    margin-bottom: 20px;
+  }
+
+  .role-selection-subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--primary);
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .tiles-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tiles-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .role-selection-title {
+    font-size: 3rem;
+  }
+
+  .role-selection-subtitle {
+    font-size: 1.2rem;
+  }
+}

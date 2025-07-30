@@ -2,16 +2,18 @@ export const SERVER_URL = import.meta.env.VITE_REACT_APP_BASE_API_URL;
 
 export const ROUTES = {
   // signup flow: role-selection -> researcher / admin signup (diff routes but the same page)
-  ROLE_SELECTION: "/role-selection",
-  RESEARCHER_SIGNUP: "/researcher-signup",
-  ADMIN_SIGNUP: "/administrator-signup",
+  ROLE_SELECTION: "/signup",
+  SIGNUP_RESEARCHER: "/researcher-signup",
+  SIGNUP_ADMIN: "/administrator-signup",
 
   // login flow: root (welcome) -> researcher / admin login
-  WELCOME: "/",
-  RESEARCHER_LOGIN: "/researcher-login",
-  ADMIN_LOGIN: "/administrator-login",
+  WELCOME: "/login",
+  LOGIN_RESEARCHER: "/researcher-login",
+  LOGIN_ADMIN: "/administrator-login",
 
-  DASHBOARD: "/dashboard",
+  VERIFY: "/verify",
+
+  DASHBOARD: "/",
   SETTINGS: "/settings",
   ADMIN_REQUESTS: "/admin-requests",
 
@@ -24,7 +26,7 @@ export const ROUTES = {
 
   // HEATMAPS: "/heatmaps",
 
-  NOT_FOUND: "/not-found",
+  NOT_FOUND: "/404",
 };
 
 export const FEATURES = {
