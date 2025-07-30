@@ -7,7 +7,7 @@ import ErrorPage from "./ErrorPage";
 import ForbiddenPage from "./ForbiddenPage";
 import SignUpPage from "./SignUpPage";
 import PaintingsPage from "./PaintingsPage";
-import HeatmapsPage from "./HeatmapsPage";
+// import HeatmapsPage from "./HeatmapsPage";
 import WelcomeScreen from "@/screens/WelcomeScreen";
 import RoleSelectionPage from "@/screens/RoleSelectionPage";
 import ResearcherLoginPage from "@/screens/LoginPages/ResearcherLoginPage";
