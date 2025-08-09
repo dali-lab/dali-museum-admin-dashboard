@@ -19,7 +19,7 @@ function DashboardPage() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "hdil-data.csv";
+        a.download = "hdil_data.zip";
         document.body.appendChild(a);
         a.click();
         a.remove();
