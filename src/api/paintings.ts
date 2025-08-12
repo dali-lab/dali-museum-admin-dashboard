@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { SERVER_URL } from "@/utils/constants";
 import axios from "axios";
-import { IPainting } from "@/types/painting";
+import { ICuratorHeatmap, IPainting } from "@/types/painting";
 
 const GET_PAINTINGS_KEY = "paintings";
 export const getPaintings = () => {
@@ -21,7 +21,7 @@ export const getPaintings = () => {
   });
 };
 
-const GET_PAINTING_KEY = "painting/byId";
+export const GET_PAINTING_KEY = "painting/byId";
 export const getPainting = (
   id: string,
   options?: { retry: boolean | number }
@@ -129,6 +129,52 @@ export const deletePainting = () => {
       queryClient.invalidateQueries({ queryKey: [GET_PAINTINGS_KEY] });
       queryClient.invalidateQueries({
         queryKey: [GET_PAINTING_KEY, deletedId],
+      });
+    },
+  });
+};
+
+const GET_CURATOR_HEATMAP_KEY = "curatorHeatmap/byPaintingId";
+export const getCuratorHeatmap = (paintingId: string) => {
+  return useQuery({
+    queryKey: [GET_CURATOR_HEATMAP_KEY, paintingId],
+    queryFn: async (): Promise<ICuratorHeatmap> => {
+      return axios
+        .get<ICuratorHeatmap>(
+          `${SERVER_URL}paintings/${paintingId}/curator-heatmap`
+        )
+        .then((response) => {
+          return response.data;
+        })
+        .catch((error) => {
+          console.error("Error when getting curator heatmap", error);
+          throw error;
+        });
+    },
+  });
+};
+
+export const updateCuratorHeatmap = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (req: ICuratorHeatmap): Promise<ICuratorHeatmap> => {
+      return axios
+        .put<ICuratorHeatmap>(
+          `${SERVER_URL}paintings/${req.paintingId}/curator-heatmap`,
+          { points: req.points }
+        )
+        .then((response) => {
+          return response.data;
+        })
+        .catch((error) => {
+          console.error("Error when updating curator heatmap", error);
+          throw error;
+        });
+    },
+    onSuccess: (payload: ICuratorHeatmap) => {
+      queryClient.invalidateQueries({
+        queryKey: [GET_CURATOR_HEATMAP_KEY, payload.paintingId],
       });
     },
   });

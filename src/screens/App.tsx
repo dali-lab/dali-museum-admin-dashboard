@@ -14,7 +14,7 @@ import AccountSettingsPage from "./AccountSettingsPage";
 import EditPaintingPage from "./EditPaintingPages/EditPaintingPage";
 import EditBasicInfoPage from "./EditPaintingPages/EditBasicInfoPage";
 import EditAnnotationsPage from "./EditPaintingPages/EditAnnotationsPage/EditAnnotationsPage";
-import EditCuratorHeatmapPage from "./EditPaintingPages/EditCuratorHeatmapPage";
+import EditCuratorHeatmapPage from "./EditPaintingPages/EditCuratorHeatmapPage/EditCuratorHeatmapPage";
 import EditPostviewImagePage from "./EditPaintingPages/EditPostviewImagePage";
 import { getBearerToken } from "@/utils/localStorage";
 import WelcomeScreen from "./AuthPages/WelcomeScreen";
