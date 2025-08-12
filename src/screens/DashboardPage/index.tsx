@@ -4,9 +4,33 @@ import NavWidget from "./NavWidget";
 import "./styles.scss";
 import PageHeader from "@/components/PageHeader";
 import { Link } from "react-router-dom";
+import { useCallback } from "react";
+import { getExport } from "@/api/export";
 
 function DashboardPage() {
   const name = getAuthUser().data.name;
+
+  const { mutate: mutateGetExport, isPending } = getExport();
+
+  const downloadExport = useCallback(async () => {
+    mutateGetExport(undefined, {
+      onSuccess: (blob) => {
+        // fake a download button click
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "hdil_data.zip";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      },
+      onError: (error) => {
+        console.error("Download export failed:", error);
+        alert("Failed to download export");
+      },
+    });
+  }, [mutateGetExport]);
 
   return (
     <>
@@ -76,7 +100,9 @@ function DashboardPage() {
                   </p>
 
                   <div>
-                    <button>Export</button>
+                    <button onClick={() => downloadExport()}>
+                      {isPending ? "Loading..." : "Export"}
+                    </button>
                   </div>
                 </div>
                 <div>
