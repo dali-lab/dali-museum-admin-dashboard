@@ -7,7 +7,12 @@ export enum UserScopes {
 export interface IUser {
   id: string;
   email: string;
-  // no password
   name: string;
   role: UserScopes;
+  isVerified: boolean;
+  createdAt: Date;
+}
+
+export function readableScope(role: UserScopes) {
+  return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
 }

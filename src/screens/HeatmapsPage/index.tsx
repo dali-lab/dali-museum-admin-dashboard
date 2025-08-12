@@ -62,7 +62,7 @@ export {};
 //   };
 
 //   return (
-//     <div className="container">
+//     <div className="">
 //       <PageHeader title={"Heatmaps"} />
 //       {isResourcesLoading ? (
 //         <p>Loading...</p>
