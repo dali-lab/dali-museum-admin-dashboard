@@ -1,11 +1,15 @@
+import { Link } from "react-router-dom";
+import { useCallback } from "react";
+import { BsClock, BsPerson, BsStopwatch } from "react-icons/bs";
 import { ROUTES } from "@/utils/constants";
 import { getAuthUser } from "@/api/auth";
 import NavWidget from "./NavWidget";
 import "./styles.scss";
 import PageHeader from "@/components/PageHeader";
-import { Link } from "react-router-dom";
-import { useCallback } from "react";
 import { getExport } from "@/api/export";
+import heatmapImage from "@/assets/heatmap.png";
+import paintingsImage from "@/assets/paintings.png";
+import Footer from "@/components/Footer/Footer";
 
 function DashboardPage() {
   const name = getAuthUser().data.name;
@@ -44,30 +48,30 @@ function DashboardPage() {
 
           <div className="widget-row">
             <NavWidget>
-              <p>Total Users Today</p>
+              <p className="text-with-icon">
+                <BsPerson className="icon" /> Total Users Today
+              </p>
               <p className="big-text">124 users</p>
             </NavWidget>
 
             <NavWidget>
-              <p>Total Time Spent Using</p>
+              <p className="text-with-icon">
+                <BsClock className="icon" /> Total Time Spent Using
+              </p>
               <p className="big-text">5 hours</p>
             </NavWidget>
 
             <NavWidget>
-              <p>Avg. Minutes Spent Using</p>
+              <p className="text-with-icon">
+                <BsStopwatch className="icon" /> Avg. Minutes Spent Using
+              </p>
               <p className="big-text">7 minutes</p>
             </NavWidget>
           </div>
 
           <div className="widget-row">
             <NavWidget>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  padding: "20px 0px",
-                }}
-              >
+              <div className="big-widget">
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <h2>Manage HDIL</h2>
                   <p style={{ textWrap: "wrap" }}>
@@ -79,20 +83,13 @@ function DashboardPage() {
                   </Link>
                 </div>
                 <div>
-                  <img src="https://loremflickr.com/180/180"></img>
+                  <img src={paintingsImage} />
                 </div>
               </div>
             </NavWidget>
 
             <NavWidget>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: "12px",
-                  padding: "20px 0px",
-                }}
-              >
+              <div className="big-widget">
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <h2>Collected Data</h2>
                   <p style={{ textWrap: "wrap" }}>
@@ -106,13 +103,14 @@ function DashboardPage() {
                   </div>
                 </div>
                 <div>
-                  <img src="https://loremflickr.com/180/180"></img>
+                  <img src={heatmapImage} />
                 </div>
               </div>
             </NavWidget>
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }
