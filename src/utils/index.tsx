@@ -21,11 +21,7 @@ export function paintingFeatures(painting: IPainting) {
   ) {
     features.push(FEATURES.ANNOTATIONS);
   }
-  if (
-    painting.curatorHeatmapPoints &&
-    painting.curatorHeatmapPoints.length &&
-    painting.curatorHeatmapPoints.length > 0
-  ) {
+  if (painting.curatorHeatmapLength && painting.curatorHeatmapLength > 0) {
     features.push(FEATURES.CURATOR_HEATMAP);
   }
   if (painting.activePostviewImage && painting.activePostviewImage != "") {

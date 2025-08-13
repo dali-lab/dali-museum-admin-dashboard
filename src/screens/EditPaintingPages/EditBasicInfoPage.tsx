@@ -26,7 +26,7 @@ const EditBasicInfoPage: React.FC = () => {
     [painting]
   );
 
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState<Partial<IPainting>>(initialForm);
   const updateForm = useCallback(
     (change: Partial<IPainting>) => {
       setForm((prev) => ({ ...prev, ...change }));

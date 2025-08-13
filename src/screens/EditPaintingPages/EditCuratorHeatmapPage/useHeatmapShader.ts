@@ -173,6 +173,8 @@ const useHeatmapShader = (
 
       // create shader program
       const shaderProgram = gl.createProgram();
+      if (!shaderProgram) throw new Error("could not create shader program");
+
       gl.attachShader(shaderProgram, vertexShader);
       gl.attachShader(shaderProgram, fragmentShader);
       gl.linkProgram(shaderProgram);
