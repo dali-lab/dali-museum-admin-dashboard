@@ -59,6 +59,28 @@ const SuccessModal: React.FC<ModalProps> = ({ isOpen, close, userName }) => {
   );
 };
 
+const Header = () => (
+  <>
+    <colgroup>
+      <col style={{ width: "20%" }} /> {/* name */}
+      <col style={{ width: "28%" }} /> {/* email */}
+      <col style={{ width: "15%" }} /> {/* date submitted */}
+      <col style={{ width: "12%" }} /> {/* status */}
+      <col style={{ width: "25%" }} /> {/* buttons */}
+    </colgroup>
+
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Date Submitted</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+  </>
+);
+
 const AdminRequests: React.FC = () => {
   const { data: pendingUsers } = getPendingUsers();
   const { data: admins } = getApprovedUsers();
@@ -93,28 +115,15 @@ const AdminRequests: React.FC = () => {
 
             {pendingUsers && pendingUsers.length > 0 ? (
               <table>
-                <colgroup>
-                  <col />
-                  <col style={{ width: "20%" }} />
-                  <col style={{ width: "20%" }} />
-                  <col style={{ width: "25%" }} />
-                </colgroup>
-
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Date Submitted</th>
-                    <th>Status</th>
-                    <th></th>
-                  </tr>
-                </thead>
+                <Header />
 
                 <tbody>
                   {pendingUsers &&
                     pendingUsers.map((request) => (
                       <tr key={request.id}>
                         <td>{request.name}</td>
-                        <td>{request.createdAt.getDate()}</td>
+                        <td>{request.email}</td>
+                        <td>{request.createdAt.toLocaleDateString()}</td>
                         <td className="status">Pending</td>
                         <td className="actions">
                           <button className="small">Deny</button>
@@ -138,28 +147,15 @@ const AdminRequests: React.FC = () => {
             <h2>Current Admins</h2>
 
             <table>
-              <colgroup>
-                <col />
-                <col style={{ width: "20%" }} />
-                <col style={{ width: "20%" }} />
-                <col style={{ width: "25%" }} />
-              </colgroup>
-
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Date Submitted</th>
-                  <th>Status</th>
-                  <th></th>
-                </tr>
-              </thead>
+              <Header />
 
               <tbody>
                 {admins &&
                   admins.map((admin) => (
                     <tr key={admin.id}>
                       <td>{admin.name}</td>
-                      <td>{admin.createdAt.getDate()}</td>
+                      <td>{admin.email}</td>
+                      <td>{admin.createdAt.toLocaleDateString()}</td>
                       <td className="approved">Approved</td>
                       <td className="actions">
                         <button className="small danger">Revoke</button>
