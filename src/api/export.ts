@@ -11,7 +11,7 @@ export const getExport = () => {
           return response.data;
         })
         .catch((error) => {
-          throw Error(error.response?.data?.errors.join("; ") ?? error);
+          throw Error(error.response?.data?.errors?.join("; ") ?? error);
         });
     },
     onError: (error: Error) => {
