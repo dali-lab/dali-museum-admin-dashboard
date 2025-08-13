@@ -23,6 +23,9 @@ export interface IPainting {
   annotations: IAnnotation[];
   activePostviewImage: string; // id
 
+  curatorHeatmapId: string;
+  curatorHeatmapLength: number;
+
   annotationColor: string;
   darkText: boolean;
 
