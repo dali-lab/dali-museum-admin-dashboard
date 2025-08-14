@@ -1,14 +1,7 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import "../styles.scss";
 import { ROUTES } from "@/utils/constants";
-import {
-  MouseEventHandler,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   getCuratorHeatmap,
   getPainting,
@@ -45,6 +38,21 @@ const EditCuratorHeatmapPage: React.FC = () => {
     {}
   );
 
+  // transform points into a format usable by heatmap
+  const [pointsArray, propertiesArray] = useMemo(() => {
+    const points: number[][] = [];
+    const properties: number[][] = [];
+
+    // construct points and properties arrays
+    Object.entries(heatmapPoints).forEach(([key, value]) => {
+      const { x, y } = JSON.parse(key);
+      points.push([x, y]);
+      properties.push([0.25, value]); // TODO the radius is hardcoded per painting in unity. why
+    });
+
+    return [points, properties];
+  }, [heatmapPoints]);
+
   const addPoints = useCallback((points: IPoint[]) => {
     setHeatmapPoints((prev) => {
       // TODO vvvv this will get slow when there's 5000 points
@@ -66,50 +74,82 @@ const EditCuratorHeatmapPage: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [isDragging, setIsDragging] = useState(false);
+  const mousePosition = useRef({ x: 0, y: 0 });
+  const drawIntervalId = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const handleDraw = useCallback(
+    ({ x, y }: { x: number; y: number }) => {
+      if (!canvasRef.current) return;
+      if (pointsArray.length >= MAX_HEATMAP_POINTS) return;
+
+      const { left, top, width, height } =
+        canvasRef.current.getBoundingClientRect();
+
+      // add a point at the mouse position
+      addPoints([{ x: (x - left) / width, y: (y - top) / height }]);
+    },
+    [addPoints, pointsArray.length]
+  );
 
   // add mouse click and drag event listeners
   useEffect(() => {
     const onMouseUp = () => {
       // stop dragging
       setIsDragging(false);
+      // clear interval
+      if (drawIntervalId.current) {
+        clearInterval(drawIntervalId.current);
+        drawIntervalId.current = null;
+      }
+    };
+
+    const onMouseDown = (e: MouseEvent) => {
+      setIsDragging(true);
+      mousePosition.current = {
+        x: e.clientX,
+        y: e.clientY,
+      };
+
+      // start interval
+      drawIntervalId.current = setInterval(() => {
+        handleDraw(mousePosition.current);
+      }, 1000 / 60); // 60 hz
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      mousePosition.current = {
+        x: e.clientX,
+        y: e.clientY,
+      };
     };
 
     window.addEventListener("mouseup", onMouseUp);
+    if (canvasRef.current) {
+      canvasRef.current.addEventListener("mousedown", onMouseDown);
+      canvasRef.current.addEventListener("mousemove", onMouseMove);
+    }
+
+    const canvas = canvasRef.current;
     return () => {
       window.removeEventListener("mouseup", onMouseUp);
+      if (canvas) {
+        canvas.removeEventListener("mousemove", onMouseMove);
+        canvas.removeEventListener("mousedown", onMouseDown);
+      }
     };
-  }, [addPoints, isDragging]);
+  }, [addPoints, handleDraw, isDragging]);
 
-  // transform points into a format usable by heatmap
-  const [pointsArray, propertiesArray] = useMemo(() => {
-    const points: number[][] = [];
-    const properties: number[][] = [];
-
-    // construct points and properties arrays
-    Object.entries(heatmapPoints).forEach(([key, value]) => {
-      const { x, y } = JSON.parse(key);
-      points.push([x, y]);
-      properties.push([0.25, value]); // TODO the radius is hardcoded per painting in unity. why
-    });
-
-    return [points, properties];
-  }, [heatmapPoints]);
-
-  // TODO limit this to 60hz
-  const handleDraw: MouseEventHandler = useCallback(
-    (e) => {
-      if (pointsArray.length >= MAX_HEATMAP_POINTS) return;
-
-      const { left, top, width, height } =
-        e.currentTarget.getBoundingClientRect();
-
-      // add a point at the mouse position
-      addPoints([
-        { x: (e.clientX - left) / width, y: (e.clientY - top) / height },
-      ]);
-    },
-    [addPoints, pointsArray.length]
-  );
+  // stop drawing if i reach max length...
+  useEffect(() => {
+    if (pointsArray.length >= MAX_HEATMAP_POINTS) {
+      setIsDragging(false);
+      if (drawIntervalId.current) {
+        clearInterval(drawIntervalId.current);
+        drawIntervalId.current = null;
+      }
+    }
+  }, [pointsArray.length]);
 
   // set up webgl shader for canvas
   const { gl, program } = useHeatmapShader(
@@ -186,14 +226,6 @@ const EditCuratorHeatmapPage: React.FC = () => {
         <canvas
           className={"heatmap-canvas" + (reachedMax ? " error" : "")}
           ref={canvasRef}
-          onMouseDown={(e) => {
-            setIsDragging(true);
-            handleDraw(e); // add point on mouse down too
-          }}
-          onMouseMove={(e) => {
-            if (!isDragging) return;
-            handleDraw(e);
-          }}
         />
         {reachedMax && (
           <div className="error-popup">
