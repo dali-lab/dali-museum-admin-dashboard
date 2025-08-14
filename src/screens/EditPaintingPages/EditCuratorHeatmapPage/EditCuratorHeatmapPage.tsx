@@ -1,6 +1,11 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import "../styles.scss";
-import { ROUTES } from "@/utils/constants";
+import {
+  HEATMAP_POINT_FREQUENCY,
+  JITTER_AMOUNT,
+  MAX_HEATMAP_POINTS,
+  ROUTES,
+} from "@/utils/constants";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   getCuratorHeatmap,
@@ -9,9 +14,6 @@ import {
 } from "@/api/paintings";
 import { IPoint } from "@/types/painting";
 import useHeatmapShader from "./useHeatmapShader";
-
-const MAX_HEATMAP_POINTS = 1800; // maximum number to allow in a heatmap.
-// this is the number of gaze points the tobii collects for a normal gazepath
 
 const EditCuratorHeatmapPage: React.FC = () => {
   const navigate = useNavigate();
@@ -85,8 +87,14 @@ const EditCuratorHeatmapPage: React.FC = () => {
       const { left, top, width, height } =
         canvasRef.current.getBoundingClientRect();
 
+      const point = { x: (x - left) / width, y: (y - top) / height };
+
+      // add jitter
+      point.x += (Math.random() - 0.5) * JITTER_AMOUNT;
+      point.y += (Math.random() - 0.5) * JITTER_AMOUNT;
+
       // add a point at the mouse position
-      addPoints([{ x: (x - left) / width, y: (y - top) / height }]);
+      addPoints([point]);
     },
     [addPoints, pointsArray.length]
   );
@@ -113,7 +121,7 @@ const EditCuratorHeatmapPage: React.FC = () => {
       // start interval
       drawIntervalId.current = setInterval(() => {
         handleDraw(mousePosition.current);
-      }, 1000 / 60); // 60 hz
+      }, 1000 / HEATMAP_POINT_FREQUENCY);
     };
 
     const onMouseMove = (e: MouseEvent) => {

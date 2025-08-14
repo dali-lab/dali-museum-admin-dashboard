@@ -34,3 +34,8 @@ export const FEATURES = {
   CURATOR_HEATMAP: { title: "Curator's Heatmap", color: "#C055D1" },
   ANNOTATIONS: { title: "Annotations", color: "#E67A50" },
 };
+
+export const MAX_HEATMAP_POINTS = 1800; // maximum number to allow in a heatmap.
+// this is the number of gaze points the tobii collects for a normal gazepath
+export const HEATMAP_POINT_FREQUENCY = 60; // in hz
+export const JITTER_AMOUNT = 0.05; // percentage of jitter to add to each point
