@@ -138,6 +138,13 @@
     align-items: flex-end;
     gap: 20px;
     justify-content: space-between;
+
+    .color-picker {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      transform: translateY(-100%);
+    }
   }
 }
 

@@ -1,11 +1,12 @@
 import { Navigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { pick } from "lodash";
+import { HexColorPicker } from "react-colorful";
 import "../styles.scss";
 import { ROUTES } from "@/utils/constants";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { getPainting, updatePainting } from "@/api/paintings";
 import { IAnnotation, IPainting } from "@/types/painting";
 import { AnnotationCircle, OpenAnnotation } from "./Annotations";
-import { pick } from "lodash";
 import TextInput from "@/components/TextInput";
 import { useElementSize } from "@/hooks/useElementSize";
 
@@ -33,6 +34,8 @@ const EditAnnotationsPage: React.FC = () => {
     },
     [setForm]
   );
+
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
 
   // ---------- image canvas size and position --------------
   // i need this to set the size of the row of buttons under the painting
@@ -276,11 +279,25 @@ const EditAnnotationsPage: React.FC = () => {
         })}
       </div>
       <div className="form-container" style={{ width: imageRect.width }}>
-        <TextInput
-          label="Annotation color"
-          value={form.annotationColor}
-          onChange={(value) => updateForm({ annotationColor: value })}
-        />
+        <div
+          style={{ position: "relative" }}
+          onFocus={() => setIsColorPickerOpen(true)}
+          onBlur={() => setIsColorPickerOpen(false)}
+        >
+          <TextInput
+            label="Annotation color"
+            value={form.annotationColor}
+            onChange={(value) => updateForm({ annotationColor: value })}
+          />
+          {isColorPickerOpen && (
+            <HexColorPicker
+              className="color-picker"
+              color={form.annotationColor}
+              onChange={(value) => updateForm({ annotationColor: value })}
+            />
+          )}
+        </div>
+
         <button className="primary" onClick={handleSave}>
           Save
         </button>
