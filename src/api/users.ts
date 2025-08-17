@@ -158,7 +158,6 @@ export const getApprovedUsers = () => {
 };
 
 export const approveUser = () => {
-  const nav = useNavigate();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -166,7 +165,7 @@ export const approveUser = () => {
       return axios
         .post<IUser>(`${SERVER_URL}users/${req.id}/approve`)
         .catch((error) => {
-          alert("Error when approving pending admin" + error);
+          alert("Error when approving pending admin: " + error.message);
           throw error;
         });
     },
@@ -178,8 +177,26 @@ export const approveUser = () => {
       // invalidate approved admins query to refresh list
       queryClient.invalidateQueries({ queryKey: [GET_ADMINS] });
     },
-    onError: () => {
-      nav(ROUTES.DASHBOARD);
+  });
+};
+
+export const rejectUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (req: { id: string }) => {
+      return axios
+        .post<IUser>(`${SERVER_URL}users/${req.id}/reject`)
+        .catch((error) => {
+          alert("Error when rejecting pending admin: " + error.message);
+          throw error;
+        });
+    },
+    onSuccess: (res, req) => {
+      // remove admin from pending
+      queryClient.setQueryData([GET_PENDING_USERS], (prev: IUser[]) => {
+        return prev.filter((user) => user.id !== req.id);
+      });
     },
   });
 };

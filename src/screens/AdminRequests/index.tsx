@@ -1,4 +1,9 @@
-import { approveUser, getApprovedUsers, getPendingUsers } from "@/api/users";
+import {
+  approveUser,
+  getApprovedUsers,
+  getPendingUsers,
+  rejectUser,
+} from "@/api/users";
 import React, { useCallback, useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import { ROUTES } from "@/utils/constants";
@@ -40,6 +45,34 @@ const ApproveModal: React.FC<ModalProps & { submit: () => void }> = ({
   );
 };
 
+const RejectModal: React.FC<ModalProps & { submit: () => void }> = ({
+  userName,
+  isOpen,
+  close,
+  submit,
+}) => {
+  return (
+    <Modal isOpen={isOpen} onClose={close}>
+      <div className="admin-modal-content">
+        <div className="modal-title">
+          Are you sure you want to deny {userName}'s admin request?
+        </div>
+        <div className="modal-text">
+          This will delete their request. They will not be given access to the
+          dashboard. They will be able to create a new account to request access
+          again.
+        </div>
+        <div className="modal-buttons">
+          <button onClick={close}>Cancel</button>
+          <button className="danger" onClick={submit}>
+            Deny
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
 const SuccessModal: React.FC<ModalProps> = ({ isOpen, close, userName }) => {
   return (
     <Modal isOpen={isOpen} onClose={close}>
@@ -62,11 +95,11 @@ const SuccessModal: React.FC<ModalProps> = ({ isOpen, close, userName }) => {
 const Header = () => (
   <>
     <colgroup>
-      <col style={{ width: "20%" }} /> {/* name */}
-      <col style={{ width: "28%" }} /> {/* email */}
-      <col style={{ width: "15%" }} /> {/* date submitted */}
-      <col style={{ width: "12%" }} /> {/* status */}
-      <col style={{ width: "25%" }} /> {/* buttons */}
+      <col style={{ width: "20%" }} />
+      <col style={{ width: "28%" }} />
+      <col style={{ width: "15%" }} />
+      <col style={{ width: "12%" }} />
+      <col style={{ width: "25%" }} />
     </colgroup>
 
     <thead>
@@ -87,15 +120,16 @@ const AdminRequests: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
 
   const { mutate: mutateApprovePendingUser } = approveUser();
+  const { mutate: mutateRejectPendingUser } = rejectUser();
 
   const [showApproveModal, setShowApproveModal] = useState<boolean>(false);
+  const [showRejectModal, setShowRejectModal] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
 
   const handleApproveClick = useCallback((user: IUser) => {
     setCurrentUser(user);
     setShowApproveModal(true);
   }, []);
-
   const handleConfirmApprove = useCallback(() => {
     if (currentUser) {
       mutateApprovePendingUser({ id: currentUser.id });
@@ -104,6 +138,19 @@ const AdminRequests: React.FC = () => {
     setShowApproveModal(false);
     setShowSuccessModal(true);
   }, [currentUser, mutateApprovePendingUser]);
+
+  const handleRejectClick = useCallback((user: IUser) => {
+    setCurrentUser(user);
+    setShowRejectModal(true);
+  }, []);
+  const handleConfirmReject = useCallback(() => {
+    if (currentUser) {
+      mutateRejectPendingUser({ id: currentUser.id });
+    }
+
+    setShowRejectModal(false);
+    alert("Request successfuly denied.");
+  }, [currentUser, mutateRejectPendingUser]);
 
   return (
     <>
@@ -126,7 +173,12 @@ const AdminRequests: React.FC = () => {
                         <td>{request.createdAt.toLocaleDateString()}</td>
                         <td className="status">Pending</td>
                         <td className="actions">
-                          <button className="small">Deny</button>
+                          <button
+                            className="small"
+                            onClick={() => handleRejectClick(request)}
+                          >
+                            Deny
+                          </button>
                           <button
                             className="small primary"
                             onClick={() => handleApproveClick(request)}
@@ -158,7 +210,12 @@ const AdminRequests: React.FC = () => {
                       <td>{admin.createdAt.toLocaleDateString()}</td>
                       <td className="approved">Approved</td>
                       <td className="actions">
-                        <button className="small danger">Revoke</button>
+                        <button
+                          className="small danger"
+                          onClick={() => handleRejectClick(admin)} // temp. TODO remove
+                        >
+                          Revoke
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -173,6 +230,14 @@ const AdminRequests: React.FC = () => {
           submit={handleConfirmApprove}
           userName={currentUser?.name ?? ""}
           close={() => setShowApproveModal(false)}
+        />
+
+        {/* Reject Confirmation Modal */}
+        <RejectModal
+          isOpen={showRejectModal && !!currentUser}
+          submit={handleConfirmReject}
+          userName={currentUser?.name ?? ""}
+          close={() => setShowRejectModal(false)}
         />
 
         {/* Success Modal */}
