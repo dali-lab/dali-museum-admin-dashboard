@@ -1,10 +1,16 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { BsEraser, BsEraserFill, BsPencil, BsPencilFill } from "react-icons/bs";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 import "../styles.scss";
 import {
   HEATMAP_POINT_FREQUENCY,
-  JITTER_AMOUNT,
   MAX_HEATMAP_POINTS,
   ROUTES,
+  MIN_BRUSH_SIZE,
+  MAX_BRUSH_SIZE,
+  MIN_POINTS_ADDED,
+  MAX_POINTS_ADDED,
 } from "@/utils/constants";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -49,7 +55,7 @@ const EditCuratorHeatmapPage: React.FC = () => {
     Object.entries(heatmapPoints).forEach(([key, value]) => {
       const { x, y } = JSON.parse(key);
       points.push([x, y]);
-      properties.push([0.25, value]); // TODO the radius is hardcoded per painting in unity. why
+      properties.push([0.4, value / 100]); // TODO the radius is hardcoded per painting in unity. why
     });
 
     return [points, properties];
@@ -75,28 +81,80 @@ const EditCuratorHeatmapPage: React.FC = () => {
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  const [isErasing, setIsErasing] = useState(false);
+  const [brushSize, setBrushSize] = useState(MIN_BRUSH_SIZE);
   const [isDragging, setIsDragging] = useState(false);
   const mousePosition = useRef({ x: 0, y: 0 });
+  const [idleMousePosition, setIdleMousePosition] = useState({ x: 0, y: 0 });
   const drawIntervalId = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const handleDraw = useCallback(
     ({ x, y }: { x: number; y: number }) => {
       if (!canvasRef.current) return;
       if (pointsArray.length >= MAX_HEATMAP_POINTS) return;
+      if (isErasing) return;
 
       const { left, top, width, height } =
         canvasRef.current.getBoundingClientRect();
 
-      const point = { x: (x - left) / width, y: (y - top) / height };
+      const clickLoc = { x: x - left, y: y - top };
 
-      // add jitter
-      point.x += (Math.random() - 0.5) * JITTER_AMOUNT;
-      point.y += (Math.random() - 0.5) * JITTER_AMOUNT;
+      // how many points to add depends on brush size
+      const numPointsToAdd =
+        MIN_POINTS_ADDED +
+        ((brushSize - MIN_BRUSH_SIZE) / (MAX_BRUSH_SIZE - MIN_BRUSH_SIZE)) *
+          (MAX_POINTS_ADDED - MIN_POINTS_ADDED);
 
-      // add a point at the mouse position
-      addPoints([point]);
+      const points = Array.from({ length: numPointsToAdd }, () => {
+        // add jitter in a circle around the point
+        // TODO i think it works better without but maybe i'll add it back in later
+        // const angle = Math.random() * 2 * Math.PI;
+        // const radius = Math.random() * (brushSize / 20);
+        // clickLoc.x += Math.cos(angle) * radius;
+        // clickLoc.y += Math.sin(angle) * radius;
+
+        const normalizedPoint = {
+          x: clickLoc.x / width,
+          y: clickLoc.y / height,
+        };
+
+        return normalizedPoint;
+      });
+
+      // add the points
+      addPoints(points);
     },
-    [addPoints, pointsArray.length]
+    [addPoints, brushSize, isErasing, pointsArray.length]
+  );
+
+  const handleErase = useCallback(
+    ({ x, y }: { x: number; y: number }) => {
+      if (!canvasRef.current) return;
+      if (!isErasing) return;
+
+      const { left, top, width, height } =
+        canvasRef.current.getBoundingClientRect();
+
+      const clickLoc = { x: x - left, y: y - top };
+      setHeatmapPoints((prev) => {
+        const newHeatmapPoints = { ...prev };
+        Object.keys(newHeatmapPoints).forEach((key) => {
+          const pointPercentage = JSON.parse(key);
+          const pointLoc = {
+            x: pointPercentage.x * width,
+            y: pointPercentage.y * height,
+          };
+          if (
+            Math.hypot(pointLoc.x - clickLoc.x, pointLoc.y - clickLoc.y) <=
+            brushSize / 2
+          ) {
+            delete newHeatmapPoints[key];
+          }
+        });
+        return newHeatmapPoints;
+      });
+    },
+    [brushSize, isErasing]
   );
 
   // add mouse click and drag event listeners
@@ -118,18 +176,29 @@ const EditCuratorHeatmapPage: React.FC = () => {
         y: e.clientY,
       };
 
-      // start interval
-      drawIntervalId.current = setInterval(() => {
-        handleDraw(mousePosition.current);
-      }, 1000 / HEATMAP_POINT_FREQUENCY);
+      if (isErasing) handleErase(mousePosition.current);
+      else {
+        // start interval
+        drawIntervalId.current = setInterval(() => {
+          handleDraw(mousePosition.current);
+        }, 1000 / HEATMAP_POINT_FREQUENCY);
+      }
     };
 
     const onMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
       mousePosition.current = {
         x: e.clientX,
         y: e.clientY,
       };
+      if (isErasing && isDragging) {
+        handleErase(mousePosition.current);
+      }
+      if (!isDragging) {
+        setIdleMousePosition({
+          x: e.clientX,
+          y: e.clientY,
+        });
+      }
     };
 
     window.addEventListener("mouseup", onMouseUp);
@@ -146,7 +215,14 @@ const EditCuratorHeatmapPage: React.FC = () => {
         canvas.removeEventListener("mousedown", onMouseDown);
       }
     };
-  }, [addPoints, handleDraw, isDragging]);
+  }, [
+    addPoints,
+    handleDraw,
+    handleErase,
+    isDragging,
+    isErasing,
+    mousePosition,
+  ]);
 
   // stop drawing if i reach max length...
   useEffect(() => {
@@ -241,11 +317,49 @@ const EditCuratorHeatmapPage: React.FC = () => {
             add more.
           </div>
         )}
+        <div
+          className="size-indicator"
+          style={{
+            width: brushSize,
+            height: brushSize,
+            left:
+              (isDragging ? mousePosition.current.x : idleMousePosition.x) -
+              (canvasRef.current?.getBoundingClientRect().left ?? 0),
+            top:
+              (isDragging ? mousePosition.current.y : idleMousePosition.y) -
+              (canvasRef.current?.getBoundingClientRect().top ?? 0),
+          }}
+        />
       </div>
       <div className="buttons-row">
-        {/* <button>draw/erase</button> */}
-        {/* <button>slider for brush size probably</button> */}
         <button onClick={clearCanvas}>Clear canvas</button>
+        <div
+          className="button switch"
+          onClick={() => setIsErasing((prev) => !prev)}
+        >
+          {isErasing ? (
+            <BsPencil className="icon" />
+          ) : (
+            <BsPencilFill className="icon selected" />
+          )}
+          {isErasing ? (
+            <BsEraserFill className="icon selected" />
+          ) : (
+            <BsEraser className="icon" />
+          )}
+        </div>
+
+        <div style={{ flexGrow: 1 }}>
+          Brush size
+          <Slider
+            style={{ maxWidth: "300px" }}
+            min={MIN_BRUSH_SIZE}
+            max={MAX_BRUSH_SIZE}
+            value={brushSize}
+            onChange={(value) => setBrushSize(value as number)}
+          />
+        </div>
+
         <button className="danger" onClick={loadPoints}>
           Discard changes
         </button>

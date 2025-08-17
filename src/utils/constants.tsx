@@ -70,4 +70,8 @@ export const MAX_PAINTINGS = 12; // maximum number of paintings in any mode
 export const MAX_HEATMAP_POINTS = 1800; // maximum number to allow in a heatmap.
 // this is the number of gaze points the tobii collects for a normal gazepath
 export const HEATMAP_POINT_FREQUENCY = 60; // in hz
-export const JITTER_AMOUNT = 0.05; // percentage of jitter to add to each point
+
+export const MIN_BRUSH_SIZE = 25;
+export const MAX_BRUSH_SIZE = 100;
+export const MIN_POINTS_ADDED = 1;
+export const MAX_POINTS_ADDED = 5;
