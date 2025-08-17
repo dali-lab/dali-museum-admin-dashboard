@@ -13,5 +13,6 @@
 
   .toggle-button.disabled {
     color: var(--error);
+    cursor: default;
   }
 }

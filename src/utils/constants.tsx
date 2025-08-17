@@ -1,3 +1,5 @@
+import { Modes } from "@/types/painting";
+
 export const SERVER_URL = import.meta.env.VITE_REACT_APP_BASE_API_URL;
 
 export const ROUTES = {
@@ -30,7 +32,42 @@ export const ROUTES = {
 };
 
 export const FEATURES = {
-  POST_VIEWING: { title: "Post-viewing", color: "#8D126D" },
   CURATOR_HEATMAP: { title: "Curator's Heatmap", color: "#C055D1" },
   ANNOTATIONS: { title: "Annotations", color: "#E67A50" },
+  POST_VIEWING: { title: "Comparative Image", color: "#8D126D" },
 };
+
+export const MODES: Record<
+  Modes,
+  {
+    key: Modes;
+    label: string;
+    conditions: string;
+  }
+> = {
+  [Modes.EXHIBITION]: {
+    key: Modes.EXHIBITION,
+    label: "Exhibition",
+    conditions:
+      "A painting must have a title, description, annotations, and a curator heatmap to be enabled for exhibition mode.",
+  },
+  [Modes.POSTVIEW]: {
+    key: Modes.POSTVIEW,
+    label: "Post-viewing",
+    conditions:
+      "A painting must have a title, description, annotations, and a curator heatmap to be enabled for post-viewing mode.",
+  },
+  [Modes.COMPARATIVE]: {
+    key: Modes.COMPARATIVE,
+    label: "Comparative",
+    conditions:
+      "A painting must have a title, description, and a comparative image to be enabled for comparative mode.",
+  },
+};
+
+export const MAX_PAINTINGS = 12; // maximum number of paintings in any mode
+
+export const MAX_HEATMAP_POINTS = 1800; // maximum number to allow in a heatmap.
+// this is the number of gaze points the tobii collects for a normal gazepath
+export const HEATMAP_POINT_FREQUENCY = 60; // in hz
+export const JITTER_AMOUNT = 0.05; // percentage of jitter to add to each point

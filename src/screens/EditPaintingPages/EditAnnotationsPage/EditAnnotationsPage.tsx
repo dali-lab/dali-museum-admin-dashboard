@@ -1,11 +1,12 @@
 import { Navigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { pick } from "lodash";
+import { HexColorPicker } from "react-colorful";
 import "../styles.scss";
 import { ROUTES } from "@/utils/constants";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { getPainting, updatePainting } from "@/api/paintings";
 import { IAnnotation, IPainting } from "@/types/painting";
 import { AnnotationCircle, OpenAnnotation } from "./Annotations";
-import { pick } from "lodash";
 import TextInput from "@/components/TextInput";
 import { useElementSize } from "@/hooks/useElementSize";
 
@@ -33,6 +34,8 @@ const EditAnnotationsPage: React.FC = () => {
     },
     [setForm]
   );
+
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
 
   // ---------- image canvas size and position --------------
   // i need this to set the size of the row of buttons under the painting
@@ -172,6 +175,18 @@ const EditAnnotationsPage: React.FC = () => {
   const { mutate: mutateUpdatePainting } = updatePainting();
 
   const handleSave = useCallback(() => {
+    // loop over annotations and make sure all of them have title and text
+    for (const [index, annotation] of annotations.entries()) {
+      if (!annotation.title || annotation.title == "") {
+        alert(`Cannot save: Annotation ${index + 1} must have a title.`);
+        return;
+      }
+      if (!annotation.text || annotation.text == "") {
+        alert(`Cannot save: Annotation ${index + 1} must have a description.`);
+        return;
+      }
+    }
+
     mutateUpdatePainting(
       {
         id: paintingId,
@@ -191,6 +206,13 @@ const EditAnnotationsPage: React.FC = () => {
       }
     );
   }, [annotations, form, mutateUpdatePainting, paintingId]);
+
+  const handleDiscardChanges = useCallback(() => {
+    if (painting) {
+      setAnnotations(painting?.annotations ?? []);
+      setForm(initialForm);
+    }
+  }, [initialForm, painting, setAnnotations]);
 
   if (isLoading) return <p>Loading...</p>;
   if (isFetched && !painting) return <Navigate to={ROUTES.NOT_FOUND} />;
@@ -275,12 +297,30 @@ const EditAnnotationsPage: React.FC = () => {
           );
         })}
       </div>
-      <div className="form-container" style={{ width: imageRect.width }}>
-        <TextInput
-          label="Annotation color"
-          value={form.annotationColor}
-          onChange={(value) => updateForm({ annotationColor: value })}
-        />
+      <div className="form-container">
+        <div
+          style={{ position: "relative" }}
+          onFocus={() => setIsColorPickerOpen(true)}
+          onBlur={() => setIsColorPickerOpen(false)}
+        >
+          <TextInput
+            label="Annotation color"
+            value={form.annotationColor}
+            onChange={(value) => updateForm({ annotationColor: value })}
+          />
+          {isColorPickerOpen && (
+            <HexColorPicker
+              className="color-picker"
+              color={form.annotationColor}
+              onChange={(value) => updateForm({ annotationColor: value })}
+            />
+          )}
+        </div>
+
+        <button className="danger" onClick={handleDiscardChanges}>
+          Discard changes
+        </button>
+
         <button className="primary" onClick={handleSave}>
           Save
         </button>

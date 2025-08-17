@@ -10,6 +10,12 @@ export interface IPoint {
   y: number;
 }
 
+export enum Modes {
+  EXHIBITION = "exhibition",
+  POSTVIEW = "post_viewing",
+  COMPARATIVE = "comparative",
+}
+
 export interface IPainting {
   id: string;
 
@@ -29,11 +35,8 @@ export interface IPainting {
   annotationColor: string;
   darkText: boolean;
 
-  exhibitionEnabled: boolean;
-  researchEnabled: boolean;
-
-  exhibitionPossible: boolean;
-  researchPossible: boolean;
+  modesPossible: Record<Modes, boolean>;
+  modesEnabled: Record<Modes, boolean>;
 }
 
 export interface ICuratorHeatmap {

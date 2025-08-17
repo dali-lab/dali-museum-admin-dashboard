@@ -7,6 +7,8 @@ import Tag from "@/components/Tag";
 import "./styles.scss";
 import { Link, useNavigate } from "react-router-dom";
 import UploadFileButton from "@/components/UploadFileButton";
+import { MAX_PAINTINGS, MODES } from "@/utils/constants";
+import { Modes } from "@/types/painting";
 
 function PaintingsPage() {
   const navigate = useNavigate();
@@ -30,7 +32,9 @@ function PaintingsPage() {
             navigate(newPainting.id);
           },
           onError: (error) => {
-            alert(`Failed to upload painting: ${error.message}`);
+            alert(
+              `Failed to upload painting: ${error.message}. Verify that your image is less than 2MB.`
+            );
           },
         }
       );
@@ -38,11 +42,28 @@ function PaintingsPage() {
     [mutateCreatePainting, navigate]
   );
 
+  const paintingsNumber = useMemo(() => {
+    const counts: Record<Modes, number> = {
+      [Modes.EXHIBITION]: 0,
+      [Modes.POSTVIEW]: 0,
+      [Modes.COMPARATIVE]: 0,
+    };
+    Object.values(MODES).forEach((mode) => (counts[mode.key] = 0));
+
+    paintings?.forEach((painting) => {
+      Object.values(MODES).forEach((mode) => {
+        if (painting.modesEnabled[mode.key]) counts[mode.key]++;
+      });
+    });
+
+    return counts;
+  }, [paintings]);
+
   // handle toggle for exhibition/research modes
   const handleModeToggle = useCallback(
-    (paintingId: string, which: string, value: boolean) => {
+    (paintingId: string, which: Modes, value: boolean) => {
       mutateUpdatePainting(
-        { id: paintingId, [which]: value },
+        { id: paintingId, ["modesEnabled." + MODES[which].key]: value },
         {
           onError: (error) => {
             alert(error.message);
@@ -135,30 +156,31 @@ function PaintingsPage() {
                     </td>
                     <td>
                       <div className="toggle-container">
-                        <Toggle
-                          label="Exhibition"
-                          disabled={!painting.exhibitionPossible}
-                          value={painting.exhibitionEnabled}
-                          onChange={() =>
-                            handleModeToggle(
-                              painting.id,
-                              "exhibitionEnabled",
-                              !painting.exhibitionEnabled
-                            )
-                          }
-                        />
-                        <Toggle
-                          label="Research"
-                          disabled={!painting.researchPossible}
-                          value={painting.researchEnabled}
-                          onChange={() =>
-                            handleModeToggle(
-                              painting.id,
-                              "researchEnabled",
-                              !painting.researchEnabled
-                            )
-                          }
-                        />
+                        {Object.values(MODES).map((mode) => (
+                          <Toggle
+                            label={mode.label}
+                            disabled={
+                              !painting.modesEnabled[mode.key] &&
+                              (!painting.modesPossible[mode.key] ||
+                                paintingsNumber[mode.key] >= MAX_PAINTINGS)
+                            }
+                            title={
+                              !painting.modesPossible[mode.key]
+                                ? mode.conditions
+                                : paintingsNumber[mode.key] >= MAX_PAINTINGS
+                                  ? `Only ${MAX_PAINTINGS} paintings can be enabled in the same mode at a time. Turn off ${mode.label.toLowerCase()} mode on another painting first.`
+                                  : undefined
+                            }
+                            value={painting.modesEnabled[mode.key]}
+                            onChange={() =>
+                              handleModeToggle(
+                                painting.id,
+                                mode.key,
+                                !painting.modesEnabled[mode.key]
+                              )
+                            }
+                          />
+                        ))}
                       </div>
                     </td>
                     <td style={{ verticalAlign: "top" }}>
