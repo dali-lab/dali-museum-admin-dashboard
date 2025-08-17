@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { BsClock, BsPerson, BsStopwatch } from "react-icons/bs";
 import { ROUTES } from "@/utils/constants";
 import { getAuthUser } from "@/api/auth";
@@ -10,9 +10,26 @@ import { getExport } from "@/api/export";
 import heatmapImage from "@/assets/heatmap.png";
 import paintingsImage from "@/assets/paintings.png";
 import Footer from "@/components/Footer/Footer";
+import { getViewerStats } from "@/api/viewers";
 
 function DashboardPage() {
   const name = getAuthUser().data.name;
+
+  const { data: viewerStats } = getViewerStats();
+  const { viewersToday, totalTime, averageTime } = useMemo(() => {
+    if (!viewerStats)
+      return {
+        viewersToday: "Loading...",
+        totalTime: "Loading...",
+        averageTime: "Loading...",
+      };
+
+    return {
+      viewersToday: viewerStats.viewersToday + " users",
+      totalTime: (viewerStats.totalTime / 3600).toFixed(1) + " hours",
+      averageTime: (viewerStats.averageTime / 60).toFixed(1) + " minutes",
+    };
+  }, [viewerStats]);
 
   const { mutate: mutateGetExport, isPending } = getExport();
 
@@ -51,21 +68,21 @@ function DashboardPage() {
               <p className="text-with-icon">
                 <BsPerson className="icon" /> Total Users Today
               </p>
-              <p className="big-text">124 users</p>
+              <p className="big-text">{viewersToday}</p>
             </NavWidget>
 
             <NavWidget>
               <p className="text-with-icon">
                 <BsClock className="icon" /> Total Time Spent Using
               </p>
-              <p className="big-text">5 hours</p>
+              <p className="big-text">{totalTime}</p>
             </NavWidget>
 
             <NavWidget>
               <p className="text-with-icon">
-                <BsStopwatch className="icon" /> Avg. Minutes Spent Using
+                <BsStopwatch className="icon" /> Avg. Time Spent Using
               </p>
-              <p className="big-text">7 minutes</p>
+              <p className="big-text">{averageTime}</p>
             </NavWidget>
           </div>
 
