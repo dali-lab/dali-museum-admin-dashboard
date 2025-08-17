@@ -32,7 +32,9 @@ function PaintingsPage() {
             navigate(newPainting.id);
           },
           onError: (error) => {
-            alert(`Failed to upload painting: ${error.message}`);
+            alert(
+              `Failed to upload painting: ${error.message}. Verify that your image is less than 2MB.`
+            );
           },
         }
       );
