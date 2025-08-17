@@ -1,6 +1,7 @@
 import { contrastingColor } from "@/utils";
 import { BsChevronDown, BsChevronUp, BsTrash } from "react-icons/bs";
 import TextInput from "@/components/TextInput";
+import { useState } from "react";
 
 interface AnnotationCircleProps {
   x: number;
@@ -63,6 +64,8 @@ export const OpenAnnotation: React.FC<OpenAnnotationProps> = ({
   closeAnnotation,
   deleteAnnotation,
 }) => {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
   return (
     <div
       className="annotation-open"
@@ -71,9 +74,37 @@ export const OpenAnnotation: React.FC<OpenAnnotationProps> = ({
         left: x,
         backgroundColor: color,
         color: contrastingColor(color),
+        padding: confirmDelete ? "0px" : undefined,
       }}
       onClick={(e) => e.stopPropagation()}
     >
+      {confirmDelete ? (
+        <div
+          className="confirm-delete"
+          style={{
+            backgroundColor: color,
+            color: contrastingColor(color),
+          }}
+        >
+          Are you sure you want to remove this annotation?
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-around",
+              width: "100%",
+            }}
+          >
+            <button onClick={() => setConfirmDelete(false)}>Cancel</button>
+            <button className="danger" onClick={() => deleteAnnotation()}>
+              Remove
+            </button>
+          </div>
+          Don't forget to save your changes when you're done, or press "Discard
+          changes" to undo.
+        </div>
+      ) : null}
+
       <div className="annotation-header">
         <BsChevronUp
           onClick={() => reorderAnnotation(-1)}
@@ -88,7 +119,7 @@ export const OpenAnnotation: React.FC<OpenAnnotationProps> = ({
             index === annotationsLength - 1 ? "disabled" : ""
           }`}
         />
-        <div className="delete-icon" onClick={() => deleteAnnotation()}>
+        <div className="delete-icon" onClick={() => setConfirmDelete(true)}>
           <BsTrash size={20} />
         </div>
       </div>
