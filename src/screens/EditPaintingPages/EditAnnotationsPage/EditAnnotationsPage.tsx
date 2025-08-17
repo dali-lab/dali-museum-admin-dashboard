@@ -195,6 +195,13 @@ const EditAnnotationsPage: React.FC = () => {
     );
   }, [annotations, form, mutateUpdatePainting, paintingId]);
 
+  const handleDiscardChanges = useCallback(() => {
+    if (painting) {
+      setAnnotations(painting?.annotations ?? []);
+      setForm(initialForm);
+    }
+  }, [initialForm, painting, setAnnotations]);
+
   if (isLoading) return <p>Loading...</p>;
   if (isFetched && !painting) return <Navigate to={ROUTES.NOT_FOUND} />;
   if (!painting) return null;
@@ -297,6 +304,10 @@ const EditAnnotationsPage: React.FC = () => {
             />
           )}
         </div>
+
+        <button className="danger" onClick={handleDiscardChanges}>
+          Discard changes
+        </button>
 
         <button className="primary" onClick={handleSave}>
           Save

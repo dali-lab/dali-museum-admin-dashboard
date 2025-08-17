@@ -246,7 +246,9 @@ const EditCuratorHeatmapPage: React.FC = () => {
         {/* <button>draw/erase</button> */}
         {/* <button>slider for brush size probably</button> */}
         <button onClick={clearCanvas}>Clear canvas</button>
-        <button onClick={loadPoints}>Discard changes</button>
+        <button className="danger" onClick={loadPoints}>
+          Discard changes
+        </button>
         <button className="primary" onClick={handleSave}>
           Save
         </button>
