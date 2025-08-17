@@ -52,7 +52,7 @@ function PaintingsPage() {
 
     paintings?.forEach((painting) => {
       Object.values(MODES).forEach((mode) => {
-        if (painting.modesEnabled[mode.key]) counts[mode.key]++;
+        if (painting.modesEnabled?.[mode.key]) counts[mode.key]++;
       });
     });
 
@@ -161,23 +161,23 @@ function PaintingsPage() {
                             key={`${painting.id}-${mode.key}`}
                             label={mode.label}
                             disabled={
-                              !painting.modesEnabled[mode.key] &&
-                              (!painting.modesPossible[mode.key] ||
+                              !painting.modesEnabled?.[mode.key] &&
+                              (!painting.modesPossible?.[mode.key] ||
                                 paintingsNumber[mode.key] >= MAX_PAINTINGS)
                             }
                             title={
-                              !painting.modesPossible[mode.key]
+                              !painting.modesPossible?.[mode.key]
                                 ? mode.conditions
                                 : paintingsNumber[mode.key] >= MAX_PAINTINGS
                                   ? `Only ${MAX_PAINTINGS} paintings can be enabled in the same mode at a time. Turn off ${mode.label.toLowerCase()} mode on another painting first.`
                                   : undefined
                             }
-                            value={painting.modesEnabled[mode.key]}
+                            value={painting.modesEnabled?.[mode.key]}
                             onChange={() =>
                               handleModeToggle(
                                 painting.id,
                                 mode.key,
-                                !painting.modesEnabled[mode.key]
+                                !painting.modesEnabled?.[mode.key]
                               )
                             }
                           />
