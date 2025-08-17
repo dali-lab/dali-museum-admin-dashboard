@@ -175,6 +175,18 @@ const EditAnnotationsPage: React.FC = () => {
   const { mutate: mutateUpdatePainting } = updatePainting();
 
   const handleSave = useCallback(() => {
+    // loop over annotations and make sure all of them have title and text
+    for (const [index, annotation] of annotations.entries()) {
+      if (!annotation.title || annotation.title == "") {
+        alert(`Cannot save: Annotation ${index + 1} must have a title.`);
+        return;
+      }
+      if (!annotation.text || annotation.text == "") {
+        alert(`Cannot save: Annotation ${index + 1} must have a description.`);
+        return;
+      }
+    }
+
     mutateUpdatePainting(
       {
         id: paintingId,
