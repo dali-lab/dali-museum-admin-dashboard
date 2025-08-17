@@ -297,7 +297,7 @@ const EditAnnotationsPage: React.FC = () => {
           );
         })}
       </div>
-      <div className="form-container" style={{ width: imageRect.width }}>
+      <div className="form-container">
         <div
           style={{ position: "relative" }}
           onFocus={() => setIsColorPickerOpen(true)}

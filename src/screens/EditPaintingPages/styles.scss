@@ -133,11 +133,15 @@
   }
 
   .form-container {
+    width: 100%;
+    padding: 0px 80px;
+    box-sizing: border-box;
+
     display: flex;
     flex-direction: row;
     align-items: flex-end;
     gap: 20px;
-    justify-content: space-between;
+    justify-content: space-around;
 
     .color-picker {
       position: absolute;
