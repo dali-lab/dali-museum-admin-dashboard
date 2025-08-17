@@ -51,6 +51,7 @@ button,
 .button {
   cursor: pointer;
   padding: 10px 20px;
+  box-sizing: border-box;
   min-width: 120px;
   background-color: var(--secondary);
   color: black;
