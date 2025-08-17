@@ -158,6 +158,7 @@ function PaintingsPage() {
                       <div className="toggle-container">
                         {Object.values(MODES).map((mode) => (
                           <Toggle
+                            key={`${painting.id}-${mode.key}`}
                             label={mode.label}
                             disabled={
                               !painting.modesEnabled[mode.key] &&
