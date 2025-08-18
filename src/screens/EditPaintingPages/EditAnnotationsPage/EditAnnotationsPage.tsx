@@ -257,6 +257,7 @@ const EditAnnotationsPage: React.FC = () => {
           const absoluteY = annotation.y * imageRect.height;
           return index === openAnnotation ? (
             <OpenAnnotation
+              key={`annotation-${index}`}
               x={absoluteX}
               y={absoluteY}
               index={index}
@@ -273,6 +274,7 @@ const EditAnnotationsPage: React.FC = () => {
             />
           ) : (
             <AnnotationCircle
+              key={`annotation-${index}`}
               x={
                 movingAnnotation?.index == index
                   ? movingAnnotation.absoluteX

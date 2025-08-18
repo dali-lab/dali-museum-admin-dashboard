@@ -209,14 +209,7 @@ const AdminRequests: React.FC = () => {
                       <td>{admin.email}</td>
                       <td>{admin.createdAt.toLocaleDateString()}</td>
                       <td className="approved">Approved</td>
-                      <td className="actions">
-                        <button
-                          className="small danger"
-                          onClick={() => handleRejectClick(admin)} // temp. TODO remove
-                        >
-                          Revoke
-                        </button>
-                      </td>
+                      <td className="actions">&nbsp;</td>
                     </tr>
                   ))}
               </tbody>

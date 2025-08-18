@@ -53,7 +53,7 @@ const EditPaintingPage: React.FC = () => {
             { name: "Basic Info", route: ROUTES.EDIT_BASIC_INFO },
             { name: "Annotations", route: ROUTES.EDIT_ANNOTATIONS },
             { name: "Curator Heatmap", route: ROUTES.EDIT_CURATOR_HEATMAP },
-            { name: "Postview Image", route: ROUTES.EDIT_POSTVIEW_IMAGE },
+            { name: "Comparative Image", route: ROUTES.EDIT_POSTVIEW_IMAGE },
           ]}
           selectedTab={selectedRoute}
         />
