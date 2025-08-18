@@ -89,8 +89,10 @@ function PaintingsPage() {
   const sortedAndFilteredPaintings = useMemo(() => {
     // return only paintings that match the search term
     if (!searchTerm) return sortedPaintings;
-    return sortedPaintings?.filter((painting) =>
-      painting.name.toLowerCase().includes(searchTerm.toLowerCase())
+    return sortedPaintings?.filter(
+      (painting) =>
+        painting.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        painting.alias?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [sortedPaintings, searchTerm]);
 
