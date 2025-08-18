@@ -19,6 +19,7 @@ function PaintingsPage() {
   const { mutate: mutateUpdatePainting } = updatePainting();
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [modeFilter, setModeFilter] = useState<Modes | "">("");
 
   const handleUploadPaintingSubmit = useCallback(
     async (file: File) => {
@@ -87,14 +88,24 @@ function PaintingsPage() {
   );
   // i put these two ^ v in separate useMemos so it doesn't re-sort every time you search
   const sortedAndFilteredPaintings = useMemo(() => {
-    // return only paintings that match the search term
-    if (!searchTerm) return sortedPaintings;
-    return sortedPaintings?.filter(
-      (painting) =>
-        painting.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        painting.alias?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [sortedPaintings, searchTerm]);
+    let filteredPaintings = sortedPaintings ?? [];
+
+    // filter paintings that match the search term
+    if (searchTerm)
+      filteredPaintings = filteredPaintings.filter(
+        (painting) =>
+          painting.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          painting.alias?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+    // filter only paintings with selected mode enabled
+    if (modeFilter !== "")
+      filteredPaintings = filteredPaintings.filter(
+        (painting) => painting.modesEnabled?.[modeFilter]
+      );
+
+    return filteredPaintings;
+  }, [sortedPaintings, searchTerm, modeFilter]);
 
   return (
     <>
@@ -109,12 +120,33 @@ function PaintingsPage() {
             gap: "8px",
           }}
         >
-          <input
-            placeholder="search"
-            style={{ width: 400 }}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: "16px",
+            }}
+          >
+            <input
+              placeholder="Search..."
+              style={{ width: 400 }}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <select
+              value={modeFilter}
+              onChange={(event) =>
+                setModeFilter(event.currentTarget.value as Modes | "")
+              }
+            >
+              <option value="">All</option>
+              {Object.values(MODES).map((mode) => (
+                <option key={mode.key} value={mode.key}>
+                  {mode.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <UploadFileButton
             handleUpload={handleUploadPaintingSubmit}
@@ -143,7 +175,7 @@ function PaintingsPage() {
                     <p>Loading...</p>
                   </td>
                 </tr>
-              ) : (
+              ) : sortedAndFilteredPaintings.length > 0 ? (
                 sortedAndFilteredPaintings?.map((painting) => (
                   <tr key={painting.id}>
                     <td>
@@ -204,6 +236,12 @@ function PaintingsPage() {
                     </td>
                   </tr>
                 ))
+              ) : (
+                <tr>
+                  <td colSpan={5}>
+                    <p>No paintings found.</p>
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
