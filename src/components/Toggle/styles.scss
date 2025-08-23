@@ -5,6 +5,7 @@
   flex-direction: row;
   gap: 10px;
   align-items: center;
+  position: relative;
 
   .toggle-button {
     color: var(--primary);
@@ -14,5 +15,20 @@
   .toggle-button.disabled {
     color: var(--error);
     cursor: default;
+  }
+
+  .tooltip {
+    position: absolute;
+    top: 2em;
+    left: 0;
+    width: 200%;
+    transform: translateX(-25%);
+    z-index: 10;
+
+    background-color: #303030;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
   }
 }
