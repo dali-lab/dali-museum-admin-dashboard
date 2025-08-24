@@ -61,6 +61,17 @@ const EditCuratorHeatmapPage: React.FC = () => {
     return [points, properties];
   }, [heatmapPoints]);
 
+  const totalPointCount = useMemo(() => {
+    // the length of pointsArray is the number of unique points
+    // if i want to limit total points, need to sum up the values in the dictionary
+    return Object.values(heatmapPoints).reduce((a, b) => a + b, 0);
+  }, [heatmapPoints]);
+
+  const reachedMax = useMemo(
+    () => totalPointCount >= MAX_HEATMAP_POINTS,
+    [totalPointCount]
+  );
+
   const addPoints = useCallback((points: IPoint[]) => {
     setHeatmapPoints((prev) => {
       // TODO vvvv this will get slow when there's 5000 points
@@ -91,7 +102,7 @@ const EditCuratorHeatmapPage: React.FC = () => {
   const handleDraw = useCallback(
     ({ x, y }: { x: number; y: number }) => {
       if (!canvasRef.current) return;
-      if (pointsArray.length >= MAX_HEATMAP_POINTS) return;
+      if (reachedMax) return;
       if (isErasing) return;
 
       const { left, top, width, height } =
@@ -124,7 +135,7 @@ const EditCuratorHeatmapPage: React.FC = () => {
       // add the points
       addPoints(points);
     },
-    [addPoints, brushSize, isErasing, pointsArray.length]
+    [addPoints, brushSize, isErasing, reachedMax]
   );
 
   const handleErase = useCallback(
@@ -226,14 +237,14 @@ const EditCuratorHeatmapPage: React.FC = () => {
 
   // stop drawing if i reach max length...
   useEffect(() => {
-    if (pointsArray.length >= MAX_HEATMAP_POINTS) {
+    if (reachedMax) {
       setIsDragging(false);
       if (drawIntervalId.current) {
         clearInterval(drawIntervalId.current);
         drawIntervalId.current = null;
       }
     }
-  }, [pointsArray.length]);
+  }, [reachedMax]);
 
   // set up webgl shader for canvas
   const { gl, program } = useHeatmapShader(
@@ -263,7 +274,8 @@ const EditCuratorHeatmapPage: React.FC = () => {
     loadPoints();
   }, [loadPoints]);
 
-  const { mutate: mutateUpdateCuratorHeatmap } = updateCuratorHeatmap();
+  const { mutate: mutateUpdateCuratorHeatmap, isPending } =
+    updateCuratorHeatmap();
 
   const handleSave = useCallback(() => {
     if (!paintingId) return;
@@ -291,11 +303,6 @@ const EditCuratorHeatmapPage: React.FC = () => {
       }
     );
   }, [heatmapPoints, mutateUpdateCuratorHeatmap, paintingId]);
-
-  const reachedMax = useMemo(
-    () => pointsArray.length >= MAX_HEATMAP_POINTS,
-    [pointsArray]
-  );
 
   if (isPaintingLoading || isLoading) return <p>Loading...</p>;
   if (isPaintingFetched && !painting) return <Navigate to={ROUTES.NOT_FOUND} />;
@@ -364,7 +371,7 @@ const EditCuratorHeatmapPage: React.FC = () => {
           Discard changes
         </button>
         <button className="primary" onClick={handleSave}>
-          Save
+          {isPending ? "Saving..." : "Save"}
         </button>
       </div>
     </div>
