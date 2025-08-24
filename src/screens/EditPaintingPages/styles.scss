@@ -263,11 +263,50 @@
   height: 100%;
   gap: 20px;
 
-  .postview-image {
-    max-width: 100%;
-    max-height: calc(100% - 80px); // leave some space for the buttons
-    object-fit: contain;
-    user-select: none;
+  .postview-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+
+    .image-column {
+      max-width: 50%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+
+      // TODO?
+      // justify-content: center;
+
+      .postview-image {
+        max-width: 100%;
+        max-height: calc(100% - 80px); // leave some space for the buttons
+        object-fit: contain;
+        user-select: none;
+      }
+
+      .postview-buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        width: 100%;
+        justify-content: space-around;
+      }
+    }
+
+    .details-form {
+      display: flex;
+      flex-grow: 1;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+      // TODO?
+      // justify-content: center;
+    }
   }
 
   .no-postview-image {
@@ -281,13 +320,5 @@
     aspect-ratio: 4 / 5;
     border: 1px dashed #dddddd;
     border-radius: 12px;
-  }
-
-  .postview-buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    width: 100%;
-    justify-content: space-around;
   }
 }
