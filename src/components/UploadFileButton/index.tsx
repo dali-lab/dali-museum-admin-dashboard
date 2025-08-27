@@ -3,12 +3,14 @@ import { useCallback } from "react";
 interface UploadFileButtonProps {
   handleUpload: (file: File) => void;
   type?: "" | "primary";
+  accept?: string;
   children?: React.ReactNode;
 }
 
 const UploadFileButton: React.FC<UploadFileButtonProps> = ({
   handleUpload,
   type = "",
+  accept,
   children,
 }) => {
   const onChange = useCallback(
@@ -33,6 +35,7 @@ const UploadFileButton: React.FC<UploadFileButtonProps> = ({
         onChange={onChange}
         id="upload-image"
         style={{ display: "none" }}
+        accept={accept}
       />
     </>
   );

@@ -65,6 +65,37 @@ export const createPostviewImage = () => {
   });
 };
 
+export const updatePostviewImage = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (
+      req: Partial<IPostviewImage>
+    ): Promise<IPostviewImage> => {
+      const { id, ...body } = req;
+      return axios
+        .put(`${SERVER_URL}postview-images/${id}`, body)
+        .then((response) => {
+          return response.data;
+        })
+        .catch((error) => {
+          const message = error.response?.data?.errors
+            ? error.response.data.errors.join("; ")
+            : error.message ?? error;
+
+          console.error("Error when updating postview image: " + message);
+
+          throw Error(message);
+        });
+    },
+    onSuccess: (payload: IPostviewImage) => {
+      queryClient.invalidateQueries({
+        queryKey: [GET_POSTVIEW_IMAGE_KEY, payload.id],
+      });
+    },
+  });
+};
+
 export const removePostviewImage = () => {
   const queryClient = useQueryClient();
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BsToggleOn, BsToggleOff } from "react-icons/bs";
 import "./styles.scss";
 
@@ -16,18 +17,23 @@ const Toggle: React.FC<ToggleProps> = ({
   disabled,
   title,
 }) => {
+  const [isHover, setIsHover] = useState(false);
+
   const props = {
     size: 25,
     className: "toggle-button" + (disabled ? " disabled" : ""),
+    onMouseEnter: () => setIsHover(true),
+    onMouseLeave: () => setIsHover(false),
   };
+
   return (
     <div
       className="toggle"
-      title={title}
       onClick={() => onChange && !disabled && onChange(!value)}
     >
       <label>{label}</label>
       {value ? <BsToggleOn {...props} /> : <BsToggleOff {...props} />}
+      {title && isHover && <div className="tooltip">{title}</div>}
     </div>
   );
 };

@@ -151,6 +151,7 @@ function PaintingsPage() {
           <UploadFileButton
             handleUpload={handleUploadPaintingSubmit}
             type="primary"
+            accept=".png,.jpg,.jpeg,.tif,.tiff"
           >
             Upload Painting
           </UploadFileButton>
@@ -203,8 +204,8 @@ function PaintingsPage() {
                               !painting.modesPossible?.[mode.key]
                                 ? mode.conditions
                                 : paintingsNumber[mode.key] >= MAX_PAINTINGS
-                                  ? `Only ${MAX_PAINTINGS} paintings can be enabled in the same mode at a time. Turn off ${mode.label.toLowerCase()} mode on another painting first.`
-                                  : undefined
+                                ? `Only ${MAX_PAINTINGS} paintings can be enabled in the same mode at a time. Turn off ${mode.label.toLowerCase()} mode on another painting first.`
+                                : undefined
                             }
                             value={painting.modesEnabled?.[mode.key]}
                             onChange={() =>
