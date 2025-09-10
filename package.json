@@ -40,7 +40,7 @@
     "react-icons": "^4.4.0",
     "react-redux": "^8.0.2",
     "react-router-dom": "^6.3.0",
-    "vite": "^6.3.4",
+    "vite": "^6.3.6",
     "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^4.2.2",
     "web-vitals": "^2.1.4",
