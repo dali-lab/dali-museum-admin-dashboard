@@ -6,6 +6,7 @@ interface TextInputProps<T> {
   type?: "text" | "textarea" | "password" | "number";
   value: T;
   label: string;
+  placeholder?: string;
   onChange?: (value: T) => void;
   error?: string;
   onBlur?: () => void; // for setting errors
@@ -33,7 +34,7 @@ function TextInput<T>({
 
   const props = {
     id,
-    type: type === "number" ? "text" : (type ?? "text"),
+    type: type === "number" ? "text" : type ?? "text",
     className: "field" + (isError ? " error" : ""),
     value: value?.toString() ?? "",
     onChange: (e: any) => {

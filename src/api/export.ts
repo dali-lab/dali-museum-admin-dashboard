@@ -4,9 +4,12 @@ import axios from "axios";
 
 export const getExport = () => {
   return useMutation({
-    mutationFn: async (): Promise<Blob> => {
+    mutationFn: async (req: {
+      startDate?: string;
+      endDate?: string;
+    }): Promise<Blob> => {
       return axios
-        .post(`${SERVER_URL}export/`, null, { responseType: "blob" })
+        .post(`${SERVER_URL}export/`, req, { responseType: "blob" })
         .then((response) => {
           return response.data;
         })

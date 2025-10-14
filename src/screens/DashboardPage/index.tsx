@@ -1,16 +1,16 @@
 import { Link } from "react-router-dom";
-import { useCallback, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { BsClock, BsPerson, BsStopwatch } from "react-icons/bs";
 import { ROUTES } from "@/utils/constants";
 import { getAuthUser } from "@/api/auth";
 import NavWidget from "./NavWidget";
 import "./styles.scss";
 import PageHeader from "@/components/PageHeader";
-import { getExport } from "@/api/export";
 import heatmapImage from "@/assets/heatmap.png";
 import paintingsImage from "@/assets/paintings.png";
 import Footer from "@/components/Footer/Footer";
 import { getViewerStats } from "@/api/viewers";
+import ExportPopup from "./ExportPopup";
 
 function DashboardPage() {
   const name = getAuthUser().data.name;
@@ -31,27 +31,7 @@ function DashboardPage() {
     };
   }, [viewerStats]);
 
-  const { mutate: mutateGetExport, isPending } = getExport();
-
-  const downloadExport = useCallback(async () => {
-    mutateGetExport(undefined, {
-      onSuccess: (blob) => {
-        // fake a download button click
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "hdil_data.zip";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-      },
-      onError: (error) => {
-        console.error("Download export failed:", error);
-        alert("Failed to download export");
-      },
-    });
-  }, [mutateGetExport]);
+  const [exportIsOpen, setExportIsOpen] = useState(false);
 
   return (
     <>
@@ -114,8 +94,8 @@ function DashboardPage() {
                   </p>
 
                   <div>
-                    <button onClick={() => downloadExport()}>
-                      {isPending ? "Loading..." : "Export"}
+                    <button onClick={() => setExportIsOpen(true)}>
+                      Export
                     </button>
                   </div>
                 </div>
@@ -127,6 +107,10 @@ function DashboardPage() {
           </div>
         </div>
       </div>
+      <ExportPopup
+        isOpen={exportIsOpen}
+        onClose={() => setExportIsOpen(false)}
+      />
       <Footer />
     </>
   );

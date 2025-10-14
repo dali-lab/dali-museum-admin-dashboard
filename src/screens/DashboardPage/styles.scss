@@ -69,3 +69,28 @@
     font-size: 24px;
   }
 }
+
+.export-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  align-items: space-between;
+  justify-content: space-between;
+
+  padding: 20px;
+  box-sizing: border-box;
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 15px;
+  }
+
+  .button-row {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+  }
+}
