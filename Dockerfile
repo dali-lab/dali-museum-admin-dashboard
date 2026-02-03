@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+ENV VITE_REACT_APP_BASE_API_URL="https://dali-museum-exhibit-backend.fly.dev"
 RUN npm run build
 
 FROM nginx:alpine
